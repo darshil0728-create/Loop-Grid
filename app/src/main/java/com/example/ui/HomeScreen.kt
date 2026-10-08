@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.ui.components.AiIntelligenceSection
 import com.example.ui.components.AuthModalDialog
 import com.example.ui.components.ExploreDemoTour
 import com.example.ui.components.ExploreWhatWeDoSheet
@@ -172,6 +173,12 @@ fun HomeScreen(
                 SustainabilitySection(
                     isDarkTheme = isDarkTheme,
                     onExploreHowLoopGridWorksClick = onExploreHowLoopGridWorksClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // SECTION 5: AI THAT TURNS EVIDENCE INTO ACTION
+                AiIntelligenceSection(
+                    isDarkTheme = isDarkTheme,
                     modifier = Modifier.fillMaxWidth()
                 )
 
