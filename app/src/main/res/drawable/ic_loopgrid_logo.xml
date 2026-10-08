@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <!-- Outer braided circular band -->
+    <path
+        android:strokeColor="#10B981"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 16,5 A 11,11 0 1,1 5,16" />
+    <path
+        android:strokeColor="#34D399"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 5,16 A 11,11 0 1,1 27,16" />
+    <path
+        android:strokeColor="#059669"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 27,16 A 11,11 0 1,1 16,27" />
+    <path
+        android:strokeColor="#10B981"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 16,27 A 11,11 0 1,1 16,5" />
+    
+    <!-- Inner orbital ring -->
+    <path
+        android:strokeColor="#8B5CF6"
+        android:strokeWidth="1.2"
+        android:pathData="M 16,10 A 6,6 0 1,1 16,22 A 6,6 0 1,1 16,10 Z" />
+
+    <!-- Center node -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 16,14 A 2,2 0 1,0 16,18 A 2,2 0 1,0 16,14 Z" />
+</vector>

@@ -1,0 +1,6 @@
+{
+  "name": "LoopGrid",
+  "description": "Ultra-high-contrast circular network connecting enterprises, MSMEs, and leftover resources into valuable circular opportunities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Circular Network Ring -->
+    <path
+        android:strokeColor="#10B981"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M 54,32 A 22,22 0 1,1 32,54" />
+    <path
+        android:strokeColor="#34D399"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M 32,54 A 22,22 0 1,1 76,54" />
+    <path
+        android:strokeColor="#059669"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M 76,54 A 22,22 0 1,1 54,76" />
+    <path
+        android:strokeColor="#10B981"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M 54,76 A 22,22 0 1,1 54,32" />
+    
+    <!-- Inner interlaced arcs -->
+    <path
+        android:strokeColor="#8B5CF6"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 44,42 C 48,38 60,38 64,42 C 68,46 68,58 64,62 C 60,66 48,66 44,62 C 40,58 40,46 44,42 Z" />
+
+    <!-- Core Center Network Node -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 54,50 A 4,4 0 1,0 54,58 A 4,4 0 1,0 54,50 Z" />
+
+    <!-- Orbital network nodes -->
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M 54,30 A 3,3 0 1,0 54,36 A 3,3 0 1,0 54,30 Z" />
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M 76,52 A 3,3 0 1,0 76,58 A 3,3 0 1,0 76,52 Z" />
+    <path
+        android:fillColor="#059669"
+        android:pathData="M 54,74 A 3,3 0 1,0 54,80 A 3,3 0 1,0 54,74 Z" />
+    <path
+        android:fillColor="#A78BFA"
+        android:pathData="M 32,52 A 3,3 0 1,0 32,58 A 3,3 0 1,0 32,52 Z" />
+</vector>
