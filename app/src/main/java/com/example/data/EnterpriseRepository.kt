@@ -47,6 +47,7 @@ class EnterpriseRepository(context: Context) {
         return EnterpriseProfile(
             enterpriseName = prefs.getString("enterprise_name", "") ?: "",
             ownerName = prefs.getString("owner_name", "") ?: "",
+            role = EnterpriseRole.fromName(prefs.getString("role", EnterpriseRole.RESOURCE_PROVIDER.name)),
             orgType = prefs.getString("org_type", "MSME (Small Enterprise)") ?: "MSME (Small Enterprise)",
             orgNature = prefs.getString("org_nature", "Metal Fabrication & Scrap Recovery") ?: "Metal Fabrication & Scrap Recovery",
             phone = prefs.getString("phone", "") ?: "",
@@ -72,6 +73,7 @@ class EnterpriseRepository(context: Context) {
             putBoolean("has_account", true)
             putString("enterprise_name", updated.enterpriseName)
             putString("owner_name", updated.ownerName)
+            putString("role", updated.role.name)
             putString("org_type", updated.orgType)
             putString("org_nature", updated.orgNature)
             putString("phone", updated.phone)
@@ -95,12 +97,28 @@ class EnterpriseRepository(context: Context) {
     /**
      * Loads the fully populated demo enterprise account directly without requiring any password or ID.
      */
-    fun loadDemoAccount(): EnterpriseProfile {
+    fun loadDemoAccount(role: EnterpriseRole = EnterpriseRole.RESOURCE_PROVIDER): EnterpriseProfile {
         val demoProfile = EnterpriseProfile(
-            enterpriseName = "Shree Balaji Fabrication Works",
-            ownerName = "Rajesh Sharma",
+            enterpriseName = when (role) {
+                EnterpriseRole.RESOURCE_PROVIDER -> "Shree Balaji Fabrication Works"
+                EnterpriseRole.TRANSIT_PARTNER -> "Apex Green Logistics & Freight"
+                EnterpriseRole.PROCESSING_ENTERPRISE -> "Maharashtra Metal Recyclers & Smelters"
+                EnterpriseRole.FINANCIAL_PARTNER -> "CircularCredit Financial Settlement Hub"
+            },
+            ownerName = when (role) {
+                EnterpriseRole.RESOURCE_PROVIDER -> "Rajesh Sharma"
+                EnterpriseRole.TRANSIT_PARTNER -> "Vikram Patil"
+                EnterpriseRole.PROCESSING_ENTERPRISE -> "Anil Agarwal"
+                EnterpriseRole.FINANCIAL_PARTNER -> "Sunita Deshmukh"
+            },
+            role = role,
             orgType = "MSME (Small Enterprise - Investment < ₹10 Cr)",
-            orgNature = "Metal Fabrication & Scrap Recovery",
+            orgNature = when (role) {
+                EnterpriseRole.RESOURCE_PROVIDER -> "Metal Fabrication & Scrap Recovery"
+                EnterpriseRole.TRANSIT_PARTNER -> "Automotive & Ancillary Engineering"
+                EnterpriseRole.PROCESSING_ENTERPRISE -> "Foundry, Forging & Casting"
+                EnterpriseRole.FINANCIAL_PARTNER -> "General Industrial Manufacturing & Assembly"
+            },
             phone = "+91 98234 56789",
             email = "contact@balajifabrication.in",
             password = "password123",
@@ -123,6 +141,7 @@ class EnterpriseRepository(context: Context) {
     fun registerNewEnterprise(
         enterpriseName: String,
         ownerName: String,
+        role: EnterpriseRole,
         orgType: String,
         orgNature: String,
         phone: String,
@@ -132,6 +151,7 @@ class EnterpriseRepository(context: Context) {
         val newProfile = EnterpriseProfile(
             enterpriseName = enterpriseName,
             ownerName = ownerName,
+            role = role,
             orgType = orgType,
             orgNature = orgNature,
             phone = phone,

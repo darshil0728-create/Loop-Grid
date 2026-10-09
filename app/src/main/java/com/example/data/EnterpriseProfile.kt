@@ -1,13 +1,59 @@
 package com.example.data
 
 /**
- * Enterprise profile data model holding initial registration credentials
- * and extended profile information filled in the Dashboard.
+ * Platform Roles available during Sign Up and Dashboard customization:
+ * 1. Resource Provider (The MSME enterprise generating scrap/by-products)
+ * 2. Transit Partner (Logistics & hauling freight partner)
+ * 3. The Processing Enterprise (Recycler / smelter / converter)
+ * 4. Financial Partner (Credit provider & payment settler for working capital shortage)
+ */
+enum class EnterpriseRole(
+    val title: String,
+    val shortTitle: String,
+    val description: String,
+    val badgeLabel: String
+) {
+    RESOURCE_PROVIDER(
+        title = "Resource Provider (MSME Enterprise)",
+        shortTitle = "Resource Provider",
+        description = "Industrial MSME generating unused materials, scrap, and by-products seeking circular offtake and liquidity.",
+        badgeLabel = "RESOURCE PROVIDER"
+    ),
+    TRANSIT_PARTNER(
+        title = "Transit Partner",
+        shortTitle = "Transit Partner",
+        description = "Logistics and freight provider managing route dispatches, weighbridge slips, and green haulage.",
+        badgeLabel = "TRANSIT PARTNER"
+    ),
+    PROCESSING_ENTERPRISE(
+        title = "The Processing Enterprise",
+        shortTitle = "Processing Enterprise",
+        description = "Smelter, re-refiner, or circular manufacturing plant transforming raw industrial scrap into secondary products.",
+        badgeLabel = "PROCESSING ENTERPRISE"
+    ),
+    FINANCIAL_PARTNER(
+        title = "Financial Partner",
+        shortTitle = "Financial Partner",
+        description = "Credit provider and payment settler offering working capital credit to MSMEs when facing capital shortage to undertake the circular transaction.",
+        badgeLabel = "FINANCIAL PARTNER"
+    );
+
+    companion object {
+        fun fromName(name: String?): EnterpriseRole {
+            return entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: RESOURCE_PROVIDER
+        }
+    }
+}
+
+/**
+ * Enterprise profile data model holding initial registration credentials,
+ * selected platform role, and extended profile information filled in the Dashboard.
  */
 data class EnterpriseProfile(
     // Initial Sign Up / Registration Fields
     val enterpriseName: String = "",
     val ownerName: String = "",
+    val role: EnterpriseRole = EnterpriseRole.RESOURCE_PROVIDER,
     val orgType: String = "MSME (Small Enterprise)",
     val orgNature: String = "Metal Fabrication & Scrap Recovery",
     val phone: String = "",

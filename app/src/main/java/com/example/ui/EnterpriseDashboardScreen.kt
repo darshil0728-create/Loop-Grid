@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -36,22 +37,31 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Factory
+import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -59,6 +69,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,9 +89,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.DashboardNotification
 import com.example.data.EnterpriseProfile
+import com.example.data.EnterpriseRole
+import com.example.data.NotificationCategory
 import com.example.data.PopularIndustrialResources
+import com.example.data.getInitialDashboardNotifications
+import com.example.ui.components.ActionNeededNearbySection
+import com.example.ui.components.CommandCenterHeroCard
+import com.example.ui.components.DashboardLeftNavDrawer
+import com.example.ui.components.DashboardNavTab
+import com.example.ui.components.DashboardNotificationsSheet
+import com.example.ui.components.FinancialPartnerCreditDesk
+import com.example.ui.components.ImpactOverviewRow
+import com.example.ui.components.NextBestActionCard
+import com.example.ui.components.RecentRecoveriesCard
 import com.example.ui.components.RegisterFeedDialog
+import com.example.ui.components.SurveillancePipelineHealth
+import java.util.UUID
 import com.example.ui.theme.CrispWhite
 import com.example.ui.theme.DarkBgBase
 import com.example.ui.theme.EmeraldLight
@@ -127,6 +153,9 @@ fun EnterpriseDashboardScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    var currentNavTab by remember { mutableStateOf(DashboardNavTab.HOME) }
+
     // Editable form state initialized from repository profile
     var profileState by remember { mutableStateOf(initialProfile) }
     var isEditingProfile by remember { mutableStateOf(initialProfile.isDraft || initialProfile.calculateCompletionPercent() < 80) }
@@ -146,6 +175,30 @@ fun EnterpriseDashboardScreen(
 
     // Register feed dialog state
     var showRegisterDialog by remember { mutableStateOf(false) }
+
+    // Notification System State
+    var notificationsList by remember { mutableStateOf(getInitialDashboardNotifications()) }
+    var showNotificationsSheet by remember { mutableStateOf(false) }
+
+    fun addNotification(
+        title: String,
+        description: String,
+        category: NotificationCategory,
+        isUrgent: Boolean = false,
+        actionLabel: String? = null
+    ) {
+        val newNotif = DashboardNotification(
+            id = UUID.randomUUID().toString(),
+            title = title,
+            description = description,
+            category = category,
+            timestamp = "Just now",
+            isRead = false,
+            actionLabel = actionLabel,
+            isUrgent = isUrgent
+        )
+        notificationsList = listOf(newNotif) + notificationsList
+    }
 
     // Helper to build profile from current inputs
     fun buildCurrentProfile(isDraft: Boolean): EnterpriseProfile {
@@ -175,93 +228,452 @@ fun EnterpriseDashboardScreen(
         }
     )
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = if (isDarkTheme) DarkBgBase else LightBgBase,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(bgBrush)
-                .statusBarsPadding(),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column(
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DashboardLeftNavDrawer(
+                currentTab = currentNavTab,
+                onTabSelected = { tab ->
+                    currentNavTab = tab
+                    coroutineScope.launch { drawerState.close() }
+                    when (tab) {
+                        DashboardNavTab.NOTIFICATIONS -> {
+                            showNotificationsSheet = true
+                        }
+                        DashboardNavTab.REPORT -> {
+                            showRegisterDialog = true
+                        }
+                        DashboardNavTab.PROFILE -> {
+                            isEditingProfile = true
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Opening enterprise profile credentials.")
+                            }
+                        }
+                        DashboardNavTab.EXPLORE -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Scanning active circular offtakers and MSME buyer clusters.")
+                            }
+                        }
+                        DashboardNavTab.MISSIONS -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Viewing nearby cleanup and transit missions.")
+                            }
+                        }
+                        DashboardNavTab.PILOTS -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Digital Resource Passports (DRPs): Real-time circular ledger active.")
+                            }
+                        }
+                        DashboardNavTab.MONITORING -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("SPCB CTO & ESG compliance tracking healthy.")
+                            }
+                        }
+                        DashboardNavTab.LEADERBOARD -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Cluster Leaderboard: Rank #4 in Maharashtra industrial cluster.")
+                            }
+                        }
+                        DashboardNavTab.ABOUT -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("LoopGrid: Making sustainability practical and profitable for India's MSMEs.")
+                            }
+                        }
+                        DashboardNavTab.RECOVERY -> {
+                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Working Capital Credit & Escrow Settlement Desk.")
+                                }
+                            } else {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Scrap recovery and smelter conversion active.")
+                                }
+                            }
+                        }
+                        DashboardNavTab.HOME -> { /* Main Command Center */ }
+                    }
+                },
+                profile = profileState,
+                unreadNotificationCount = notificationsList.count { !it.isRead },
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = { /* Toggle theme handled */ },
+                onCloseDrawer = { coroutineScope.launch { drawerState.close() } }
+            )
+        }
+    ) {
+        Scaffold(
+            modifier = modifier.fillMaxSize(),
+            containerColor = if (isDarkTheme) DarkBgBase else LightBgBase,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { innerPadding ->
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(innerPadding)
+                    .background(bgBrush)
+                    .statusBarsPadding(),
+                contentAlignment = Alignment.TopCenter
             ) {
-                // 1. Dashboard Top Bar
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(
-                            onClick = onBackToHome,
-                            modifier = Modifier.testTag("btn_dashboard_back")
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back to Home",
-                                tint = if (isDarkTheme) CrispWhite else LightTextHeadline
-                            )
+                    // 1. Dashboard Top Bar (Inspired by Environmental Command Center from Screenshot)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Left Nav Center / Drawer Menu Button
+                            IconButton(
+                                onClick = { coroutineScope.launch { drawerState.open() } },
+                                modifier = Modifier.testTag("btn_dashboard_menu")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Open Navigation Menu",
+                                    tint = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                )
+                            }
+
+                            IconButton(
+                                onClick = onBackToHome,
+                                modifier = Modifier.testTag("btn_dashboard_back")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Back to Home",
+                                    tint = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = "COMMAND CENTER",
+                                        fontFamily = PlusJakartaSans,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 11.sp,
+                                        letterSpacing = 1.0.sp,
+                                        color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                                    )
+
+                                    Spacer(modifier = Modifier.width(6.dp))
+
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(if (isDarkTheme) Color(0x33F59E0B) else Color(0x22F59E0B))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "DEMO DATA",
+                                            fontFamily = FontFamily.Monospace,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 8.sp,
+                                            color = Color(0xFFF59E0B)
+                                        )
+                                    }
+                                }
+
+                                Text(
+                                    text = profileState.enterpriseName.ifBlank { "My Enterprise" },
+                                    fontFamily = PlusJakartaSans,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 16.sp,
+                                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.width(6.dp))
+                        // Top Bar Action Buttons: Role Pill, Notifications Bell & Logout
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Active Role Pill
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .background(if (isDarkTheme) Color(0x3310B981) else Color(0x2010B981))
+                                    .border(1.dp, if (isDarkTheme) Color(0x5510B981) else Color(0x4D059669), RoundedCornerShape(20.dp))
+                                    .padding(horizontal = 10.dp, vertical = 5.dp)
+                            ) {
+                                Text(
+                                    text = profileState.role.shortTitle,
+                                    fontFamily = PlusJakartaSans,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 11.sp,
+                                    color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                                )
+                            }
 
-                        Column {
-                            Text(
-                                text = "ENTERPRISE DASHBOARD",
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp,
-                                letterSpacing = 1.0.sp,
-                                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
-                            )
-                            Text(
-                                text = profileState.enterpriseName.ifBlank { "My Enterprise" },
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 18.sp,
-                                color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                            )
+                            // Notifications button with badge
+                            Box(contentAlignment = Alignment.TopEnd) {
+                                IconButton(
+                                    onClick = { showNotificationsSheet = true },
+                                    modifier = Modifier.testTag("btn_dashboard_notifications")
+                                ) {
+                                    Icon(
+                                        imageVector = if (notificationsList.any { !it.isRead }) Icons.Default.NotificationsActive else Icons.Default.Notifications,
+                                        contentDescription = "Notifications & Alerts",
+                                        tint = if (notificationsList.any { !it.isRead }) {
+                                            if (isDarkTheme) EmeraldLight else LightEmerald
+                                        } else {
+                                            if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                                        }
+                                    )
+                                }
+
+                                val unreadCount = notificationsList.count { !it.isRead }
+                                if (unreadCount > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(top = 4.dp, end = 4.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(0xFFEF4444))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "$unreadCount",
+                                            fontFamily = PlusJakartaSans,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 10.sp,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
+
+                            IconButton(
+                                onClick = onLogout,
+                                modifier = Modifier.testTag("btn_dashboard_logout")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Logout,
+                                    contentDescription = "Log Out",
+                                    tint = if (isDarkTheme) Color(0xFFEF4444) else Color(0xFFDC2626)
+                                )
+                            }
                         }
                     }
 
-                    // Logout / Home Button
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IconButton(
-                            onClick = onLogout,
-                            modifier = Modifier.testTag("btn_dashboard_logout")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Logout,
-                                contentDescription = "Log Out",
-                                tint = if (isDarkTheme) Color(0xFFEF4444) else Color(0xFFDC2626)
-                            )
+                    // 2. Interactive Role Switcher Bar (lets user test each role's customized dashboard)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 14.dp)
+                            .horizontalScroll(rememberScrollState()),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "ROLE VIEW:",
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 10.sp,
+                            letterSpacing = 0.5.sp,
+                            color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                        )
+
+                        EnterpriseRole.entries.forEach { role ->
+                            val isCurrent = profileState.role == role
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(
+                                        if (isCurrent) {
+                                            if (isDarkTheme) EmeraldPrimary else LightEmerald
+                                        } else {
+                                            if (isDarkTheme) Color(0xFF13201B) else Color(0xFFE2E8F0)
+                                        }
+                                    )
+                                    .border(
+                                        1.dp,
+                                        if (isCurrent) Color.Transparent else if (isDarkTheme) Color(0x33334155) else Color(0xFFCBD5E1),
+                                        RoundedCornerShape(8.dp)
+                                    )
+                                    .clickable {
+                                        profileState = profileState.copy(role = role)
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("Switched dashboard to: ${role.title}")
+                                        }
+                                    }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    .testTag("btn_role_tab_${role.name.lowercase()}")
+                            ) {
+                                Text(
+                                    text = role.shortTitle,
+                                    fontFamily = PlusJakartaSans,
+                                    fontWeight = if (isCurrent) FontWeight.ExtraBold else FontWeight.Medium,
+                                    fontSize = 11.sp,
+                                    color = if (isCurrent) {
+                                        if (isDarkTheme) Slate950 else CrispWhite
+                                    } else {
+                                        if (isDarkTheme) Slate200 else Color(0xFF475569)
+                                    }
+                                )
+                            }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    // Live Notification & Alerts Banner (Material Matches, DRP Checkpoints, Updates)
+                    DashboardLiveAlertBanner(
+                        latestAlert = notificationsList.firstOrNull { !it.isRead && (it.isUrgent || it.category == NotificationCategory.MATERIAL_MATCH || it.category == NotificationCategory.DRP_ACTION) }
+                            ?: notificationsList.firstOrNull { !it.isRead },
+                        totalUnreadCount = notificationsList.count { !it.isRead },
+                        isDarkTheme = isDarkTheme,
+                        onOpenAllNotifications = { showNotificationsSheet = true },
+                        onActionClick = { notif ->
+                            notificationsList = notificationsList.map {
+                                if (it.id == notif.id) it.copy(isRead = true) else it
+                            }
+                            coroutineScope.launch {
+                                when (notif.category) {
+                                    NotificationCategory.MATERIAL_MATCH -> {
+                                        snackbarHostState.showSnackbar("Opening match offer: ${notif.title}")
+                                    }
+                                    NotificationCategory.DRP_ACTION -> {
+                                        snackbarHostState.showSnackbar("Opening Passport action: ${notif.title}")
+                                    }
+                                    NotificationCategory.PROFILE_RESOURCE -> {
+                                        isEditingProfile = true
+                                        snackbarHostState.showSnackbar("Opening details: ${notif.title}")
+                                    }
+                                    else -> {
+                                        snackbarHostState.showSnackbar(notif.title)
+                                    }
+                                }
+                            }
+                        },
+                        onDismiss = { notifId ->
+                            notificationsList = notificationsList.map {
+                                if (it.id == notifId) it.copy(isRead = true) else it
+                            }
+                        }
+                    )
 
-                // 2. Enterprise Identity Overview Card
-                DashboardIdentityCard(
-                    profile = profileState,
-                    isDarkTheme = isDarkTheme,
-                    completionPercent = completionPercent,
-                    onRegisterFeedClick = { showRegisterDialog = true }
-                )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    // HERO COMMAND CENTER SECTION (From Reference Image)
+                    CommandCenterHeroCard(
+                        profile = profileState,
+                        isDarkTheme = isDarkTheme,
+                        onPrimaryActionClick = {
+                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Opening MSME working capital credit facility.")
+                                }
+                            } else {
+                                showRegisterDialog = true
+                            }
+                        },
+                        onSecondaryActionClick = {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Scanning cluster hotspots and active demand.")
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // IMPACT OVERVIEW ROW (4 KPI Cards from Reference Image)
+                    ImpactOverviewRow(
+                        role = profileState.role,
+                        isDarkTheme = isDarkTheme
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // FIELD SURVEILLANCE PIPELINE (5 Stages from Reference Image)
+                    SurveillancePipelineHealth(
+                        isDarkTheme = isDarkTheme
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    // YOUR NEXT BEST ACTION CARD (From Reference Image)
+                    NextBestActionCard(
+                        role = profileState.role,
+                        isDarkTheme = isDarkTheme,
+                        onActionClick = {
+                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                addNotification(
+                                    title = "Working Capital Line Disbursed",
+                                    description = "Disbursed ₹3,50,000 credit line to Shree Balaji Works. Collateral locked in escrow DRP.",
+                                    category = NotificationCategory.PROFILE_RESOURCE,
+                                    isUrgent = false,
+                                    actionLabel = "View Escrow Slip"
+                                )
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Approved & disbursed ₹3,50,000 working capital line.")
+                                }
+                            } else {
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Proceeding with next circular action.")
+                                }
+                            }
+                        }
+                    )
+
+                    // SPECIALIZED FINANCIAL PARTNER MODULE (when Financial Partner is selected)
+                    if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                        Spacer(modifier = Modifier.height(20.dp))
+                        FinancialPartnerCreditDesk(
+                            isDarkTheme = isDarkTheme,
+                            onApproveCredit = { amount, enterprise ->
+                                addNotification(
+                                    title = "Working Capital Credit Line Activated",
+                                    description = "Disbursed $amount credit line to $enterprise. 30-day term, 1.2% monthly rate, 100% escrow DRP collateral.",
+                                    category = NotificationCategory.MATERIAL_MATCH,
+                                    isUrgent = false,
+                                    actionLabel = "View Escrow Vault"
+                                )
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar("Credit line $amount successfully disbursed to $enterprise!")
+                                }
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(22.dp))
+
+                    // ACTION NEEDED NEARBY SECTION (From Reference Image)
+                    ActionNeededNearbySection(
+                        isDarkTheme = isDarkTheme,
+                        onViewAllClick = {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("Opening all nearby circular recovery missions.")
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // RECENT RECOVERIES (Before / After from Reference Image)
+                    RecentRecoveriesCard(
+                        isDarkTheme = isDarkTheme
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // ENTERPRISE IDENTITY OVERVIEW CARD
+                    DashboardIdentityCard(
+                        profile = profileState,
+                        isDarkTheme = isDarkTheme,
+                        completionPercent = completionPercent,
+                        onRegisterFeedClick = { showRegisterDialog = true }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
 
                 // 3. COMPLETE YOUR PROFILE Section (Form with Save Draft & Edit Anytime)
                 Box(
@@ -714,6 +1126,13 @@ fun EnterpriseDashboardScreen(
                                     val updated = buildCurrentProfile(isDraft = true)
                                     profileState = updated
                                     onSaveProfile(updated, true)
+                                    addNotification(
+                                        title = "Profile Draft Saved",
+                                        description = "Your enterprise profile draft was updated. Registered office: ${registeredOfficeInput.ifBlank { "Not specified" }}, Dealing in ${selectedResources.size} resource stream(s).",
+                                        category = NotificationCategory.PROFILE_RESOURCE,
+                                        isUrgent = false,
+                                        actionLabel = "Resume Editing"
+                                    )
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar("Draft saved successfully! You can resume and edit anytime.")
                                     }
@@ -741,6 +1160,13 @@ fun EnterpriseDashboardScreen(
                                     profileState = updated
                                     isEditingProfile = false
                                     onSaveProfile(updated, false)
+                                    addNotification(
+                                        title = "Profile Verified & Published",
+                                        description = "Enterprise credentials for ${profileState.enterpriseName} updated with ${selectedResources.size} resource(s) and plant records.",
+                                        category = NotificationCategory.PROFILE_RESOURCE,
+                                        isUrgent = false,
+                                        actionLabel = "View Verified Card"
+                                    )
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar("Profile updated and verified successfully!")
                                     }
@@ -789,8 +1215,96 @@ fun EnterpriseDashboardScreen(
             isDarkTheme = isDarkTheme,
             onDismiss = { showRegisterDialog = false },
             onSubmitSuccess = { material, tons, district ->
+                val drpCode = "DRP-${district.uppercase().take(3)}-2026-${(1000..9999).random()}"
+                addNotification(
+                    title = "Digital Resource Passport Generated",
+                    description = "Passport $drpCode issued for $tons Tons of $material in $district. Ready for verified circular offtake.",
+                    category = NotificationCategory.DRP_ACTION,
+                    isUrgent = true,
+                    actionLabel = "View DRP Slip"
+                )
+                addNotification(
+                    title = "Matching Engine Active: $material",
+                    description = "Matching algorithm is scanning regional aggregators and smelters within 60 km of $district for $material.",
+                    category = NotificationCategory.MATERIAL_MATCH,
+                    isUrgent = true,
+                    actionLabel = "Monitor Offtakers"
+                )
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar("Resource registered: $tons Tons of $material in $district! Digital Resource Passport generated.")
+                }
+            }
+        )
+    }
+
+    // Notifications Bottom Sheet
+    if (showNotificationsSheet) {
+        DashboardNotificationsSheet(
+            notifications = notificationsList,
+            isDarkTheme = isDarkTheme,
+            onDismiss = { showNotificationsSheet = false },
+            onMarkAllAsRead = {
+                notificationsList = notificationsList.map { it.copy(isRead = true) }
+            },
+            onNotificationActionClick = { notif ->
+                notificationsList = notificationsList.map {
+                    if (it.id == notif.id) it.copy(isRead = true) else it
+                }
+                showNotificationsSheet = false
+                coroutineScope.launch {
+                    when (notif.category) {
+                        NotificationCategory.MATERIAL_MATCH -> {
+                            snackbarHostState.showSnackbar("Opening match offer: ${notif.title}")
+                        }
+                        NotificationCategory.DRP_ACTION -> {
+                            snackbarHostState.showSnackbar("Opening Digital Resource Passport: ${notif.title}")
+                        }
+                        NotificationCategory.PROFILE_RESOURCE -> {
+                            isEditingProfile = true
+                            snackbarHostState.showSnackbar("Navigating to Profile details: ${notif.title}")
+                        }
+                        else -> {
+                            snackbarHostState.showSnackbar(notif.title)
+                        }
+                    }
+                }
+            },
+            onDeleteNotification = { notifId ->
+                notificationsList = notificationsList.filter { it.id != notifId }
+            },
+            onSimulateNewNotification = {
+                val sampleAlerts = listOf(
+                    Triple(
+                        "High-Volume Offtake Match Found!",
+                        "Tata Motors vendor cluster in Chakan requested 42 Tons of Mild Steel Turning Scrap at premium index rate.",
+                        NotificationCategory.MATERIAL_MATCH
+                    ),
+                    Triple(
+                        "DRP Action Required: SPCB Manifest Sign-off",
+                        "Digital Resource Passport DRP-MH-2026-8812 requires digital authorized sign-off before dispatch.",
+                        NotificationCategory.DRP_ACTION
+                    ),
+                    Triple(
+                        "Resource Benchmark Rate Update",
+                        "Aluminum wire scrap & extrusion scrap benchmark rates increased +3.8% across western state clusters.",
+                        NotificationCategory.PROFILE_RESOURCE
+                    ),
+                    Triple(
+                        "Offtake Verification Confirmed",
+                        "Jindal Ancillary cluster verified physical inspection for lot DRP-MH-2026-9041.",
+                        NotificationCategory.MATERIAL_MATCH
+                    )
+                )
+                val randomAlert = sampleAlerts.random()
+                addNotification(
+                    title = randomAlert.first,
+                    description = randomAlert.second,
+                    category = randomAlert.third,
+                    isUrgent = true,
+                    actionLabel = "Review Alert"
+                )
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("New notification received: ${randomAlert.first}")
                 }
             }
         )
@@ -1108,3 +1622,246 @@ private fun dashboardTextFieldColors(isDarkTheme: Boolean) = OutlinedTextFieldDe
     unfocusedContainerColor = if (isDarkTheme) Color(0x330B120F) else Color(0xFFF8FAFC),
     disabledContainerColor = if (isDarkTheme) Color(0x220B120F) else Color(0xFFF1F5F9)
 )
+
+private data class AlertVisuals(
+    val accent: Color,
+    val bg: Color,
+    val icon: ImageVector,
+    val tag: String
+)
+
+@Composable
+private fun DashboardLiveAlertBanner(
+    latestAlert: DashboardNotification?,
+    totalUnreadCount: Int,
+    isDarkTheme: Boolean,
+    onOpenAllNotifications: () -> Unit,
+    onActionClick: (DashboardNotification) -> Unit,
+    onDismiss: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (latestAlert == null) {
+        // Clean status strip when all alerts are caught up
+        Box(
+            modifier = modifier
+                .widthIn(max = 840.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(if (isDarkTheme) Color(0x2210B981) else Color(0x15059669))
+                .border(1.dp, if (isDarkTheme) Color(0x3310B981) else Color(0x2E059669), RoundedCornerShape(12.dp))
+                .clickable { onOpenAllNotifications() }
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .testTag("dashboard_all_clear_status")
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Matching engine active • Passports & records up-to-date",
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                    )
+                }
+
+                Text(
+                    text = "View Alerts →",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                )
+            }
+        }
+        return
+    }
+
+    val visuals = when (latestAlert.category) {
+        NotificationCategory.MATERIAL_MATCH -> AlertVisuals(
+            accent = Color(0xFF10B981),
+            bg = if (isDarkTheme) Color(0xF00A1813) else Color(0xFFF0FDF4),
+            icon = Icons.Default.Handshake,
+            tag = "MATERIAL MATCH FOUND"
+        )
+        NotificationCategory.DRP_ACTION -> AlertVisuals(
+            accent = Color(0xFFF59E0B),
+            bg = if (isDarkTheme) Color(0xF01C160B) else Color(0xFFFFFBEB),
+            icon = Icons.Default.QrCode2,
+            tag = "DRP ACTION REQUIRED"
+        )
+        NotificationCategory.PROFILE_RESOURCE -> AlertVisuals(
+            accent = Color(0xFF8B5CF6),
+            bg = if (isDarkTheme) Color(0xF014101F) else Color(0xFFFAF5FF),
+            icon = Icons.Default.Settings,
+            tag = "PROFILE & RESOURCE UPDATE"
+        )
+        NotificationCategory.ALL -> AlertVisuals(
+            accent = Color(0xFF3B82F6),
+            bg = if (isDarkTheme) Color(0xF00D1520) else Color(0xFFEFF6FF),
+            icon = Icons.Default.Notifications,
+            tag = "ALERT"
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .widthIn(max = 840.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                visuals.accent.copy(alpha = if (isDarkTheme) 0.6f else 0.8f),
+                RoundedCornerShape(16.dp)
+            )
+            .background(visuals.bg)
+            .padding(16.dp)
+            .testTag("dashboard_live_alert_banner")
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(visuals.accent.copy(alpha = 0.2f))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = visuals.icon,
+                                contentDescription = null,
+                                tint = visuals.accent,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = visuals.tag,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 10.sp,
+                                color = visuals.accent,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                    }
+
+                    if (latestAlert.isUrgent) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color(0x33EF4444))
+                                .padding(horizontal = 6.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "HIGH PRIORITY",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 9.sp,
+                                color = Color(0xFFEF4444)
+                            )
+                        }
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = latestAlert.timestamp,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
+                        color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = { onDismiss(latestAlert.id) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Dismiss",
+                            tint = if (isDarkTheme) Slate400 else Color(0xFF94A3B8),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = latestAlert.title,
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 15.sp,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = latestAlert.description,
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                lineHeight = 17.sp,
+                color = if (isDarkTheme) Color(0xCCF1F5F9) else Color(0xFF334155)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Secondary action: Open all notifications
+                Text(
+                    text = "View All Alerts ($totalUnreadCount unread) →",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = visuals.accent,
+                    modifier = Modifier
+                        .clickable { onOpenAllNotifications() }
+                        .padding(vertical = 4.dp)
+                )
+
+                if (latestAlert.actionLabel != null) {
+                    Button(
+                        onClick = { onActionClick(latestAlert) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = visuals.accent,
+                            contentColor = if (latestAlert.category == NotificationCategory.MATERIAL_MATCH) Slate950 else CrispWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.height(34.dp)
+                    ) {
+                        Text(
+                            text = latestAlert.actionLabel,
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}

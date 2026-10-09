@@ -23,12 +23,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Factory
+import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PrecisionManufacturing
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -55,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -63,6 +69,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.EnterpriseRole
 import com.example.data.OrganizationNatures
 import com.example.data.OrganizationTypes
 import com.example.ui.theme.CrispWhite
@@ -98,6 +105,7 @@ fun SignUpScreen(
     onSignUpSuccess: (
         orgName: String,
         ownerName: String,
+        role: EnterpriseRole,
         orgType: String,
         orgNature: String,
         phone: String,
@@ -111,6 +119,7 @@ fun SignUpScreen(
 ) {
     BackHandler { onBack() }
 
+    var selectedRole by remember { mutableStateOf(EnterpriseRole.RESOURCE_PROVIDER) }
     var orgName by remember { mutableStateOf("") }
     var ownerName by remember { mutableStateOf("") }
     var selectedOrgType by remember { mutableStateOf(OrganizationTypes[1]) }
@@ -280,6 +289,144 @@ fun SignUpScreen(
                                         fontSize = 11.sp,
                                         color = if (isDarkTheme) Slate950 else CrispWhite
                                     )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // ROLE SELECTION SECTION
+                        Text(
+                            text = "WHICH ROLE ARE YOU SIGNING UP FOR? *",
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.sp,
+                            letterSpacing = 1.0.sp,
+                            color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Select your operational role. LoopGrid tailors your dashboard, metrics, and actions to your role.",
+                            fontFamily = PlusJakartaSans,
+                            fontSize = 12.sp,
+                            color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            EnterpriseRole.entries.forEach { role ->
+                                val isSelected = selectedRole == role
+                                val roleIcon = when (role) {
+                                    EnterpriseRole.RESOURCE_PROVIDER -> Icons.Default.Factory
+                                    EnterpriseRole.TRANSIT_PARTNER -> Icons.Default.LocalShipping
+                                    EnterpriseRole.PROCESSING_ENTERPRISE -> Icons.Default.PrecisionManufacturing
+                                    EnterpriseRole.FINANCIAL_PARTNER -> Icons.Default.AccountBalance
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .border(
+                                            width = if (isSelected) 2.dp else 1.dp,
+                                            color = if (isSelected) {
+                                                if (isDarkTheme) EmeraldPrimary else LightEmerald
+                                            } else {
+                                                if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0)
+                                            },
+                                            shape = RoundedCornerShape(14.dp)
+                                        )
+                                        .background(
+                                            if (isSelected) {
+                                                if (isDarkTheme) Color(0x2210B981) else Color(0x1510B981)
+                                            } else {
+                                                if (isDarkTheme) Color(0x400A1118) else Color(0xFFF8FAFC)
+                                            }
+                                        )
+                                        .clickable { selectedRole = role }
+                                        .padding(14.dp)
+                                        .testTag("role_option_${role.name.lowercase()}")
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(
+                                                    if (isSelected) {
+                                                        if (isDarkTheme) Color(0x3310B981) else Color(0x2010B981)
+                                                    } else {
+                                                        if (isDarkTheme) Color(0x22334155) else Color(0xFFE2E8F0)
+                                                    }
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = roleIcon,
+                                                contentDescription = null,
+                                                tint = if (isSelected) {
+                                                    if (isDarkTheme) EmeraldLight else LightEmerald
+                                                } else {
+                                                    if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                                                },
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+
+                                        Spacer(modifier = Modifier.width(12.dp))
+
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(
+                                                    text = role.title,
+                                                    fontFamily = PlusJakartaSans,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp,
+                                                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                                )
+
+                                                if (isSelected) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.CheckCircle,
+                                                        contentDescription = "Selected",
+                                                        tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            Spacer(modifier = Modifier.height(4.dp))
+
+                                            Text(
+                                                text = role.description,
+                                                fontFamily = PlusJakartaSans,
+                                                fontSize = 11.sp,
+                                                lineHeight = 16.sp,
+                                                color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                                            )
+
+                                            if (role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                                Spacer(modifier = Modifier.height(4.dp))
+                                                Text(
+                                                    text = "★ Extends working capital credit facilities to MSMEs during transaction liquidity shortages.",
+                                                    fontFamily = PlusJakartaSans,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    fontSize = 11.sp,
+                                                    color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -525,6 +672,7 @@ fun SignUpScreen(
                                     onSignUpSuccess(
                                         orgName.trim(),
                                         ownerName.trim(),
+                                        selectedRole,
                                         selectedOrgType,
                                         selectedOrgNature,
                                         phone.trim(),

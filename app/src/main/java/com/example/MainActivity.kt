@@ -90,10 +90,11 @@ class MainActivity : ComponentActivity() {
                     AppScreen.SIGNUP -> {
                         SignUpScreen(
                             isDarkTheme = isDarkTheme,
-                            onSignUpSuccess = { orgName, ownerName, orgType, orgNature, phone, email, password ->
+                            onSignUpSuccess = { orgName, ownerName, role, orgType, orgNature, phone, email, password ->
                                 enterpriseRepo.registerNewEnterprise(
                                     enterpriseName = orgName,
                                     ownerName = ownerName,
+                                    role = role,
                                     orgType = orgType,
                                     orgNature = orgNature,
                                     phone = phone,
