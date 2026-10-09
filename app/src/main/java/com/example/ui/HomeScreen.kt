@@ -54,6 +54,8 @@ fun HomeScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     onExploreHowLoopGridWorksClick: () -> Unit = {},
+    onLogInClick: () -> Unit = {},
+    onSignUpClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -119,14 +121,8 @@ fun HomeScreen(
                             isDarkTheme = isDarkTheme,
                             onToggleTheme = onToggleTheme,
                             onExploreDemoClick = { showDemoTour = true },
-                            onLogInClick = {
-                                authIsSignUp = false
-                                showAuthModal = true
-                            },
-                            onSignUpClick = {
-                                authIsSignUp = true
-                                showAuthModal = true
-                            },
+                            onLogInClick = onLogInClick,
+                            onSignUpClick = onSignUpClick,
                             modifier = Modifier.fillMaxWidth()
                         )
 
