@@ -131,14 +131,14 @@ fun AiIntelligenceSection(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // 3. Subtitle
+            // 3. Subtitle: bold and readable
             Text(
                 text = "Two specialized AI layers working together to analyse the resource image and formulate clear re-usage way.",
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
-                lineHeight = 23.sp,
-                color = if (isDarkTheme) Color(0xB394A3B8) else LightTextBody,
+                lineHeight = 24.sp,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .widthIn(max = 680.dp)
@@ -311,14 +311,14 @@ private fun AiLayerCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Description Body
+            // Description Body: bold and high contrast
             Text(
                 text = description,
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
-                lineHeight = 21.sp,
-                color = if (isDarkTheme) Color(0xB394A3B8) else LightTextBody
+                lineHeight = 22.sp,
+                color = if (isDarkTheme) Color(0xFFE2E8F0) else LightTextHeadline
             )
 
             Spacer(modifier = Modifier.height(22.dp))
@@ -349,9 +349,9 @@ private fun AiLayerCard(
                     Text(
                         text = footerFeature,
                         fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        color = if (isDarkTheme) Color(0xD9CBD5E1) else LightTextMuted
+                        color = if (isDarkTheme) CrispWhite else LightTextHeadline
                     )
                 }
             }

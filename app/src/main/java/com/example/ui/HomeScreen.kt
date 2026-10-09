@@ -44,6 +44,7 @@ import com.example.ui.components.RegisterFeedDialog
 import com.example.ui.components.StatDetailDialog
 import com.example.ui.components.StatType
 import com.example.ui.components.SustainabilitySection
+import com.example.ui.components.TransformCtaAndFooterSection
 import com.example.ui.theme.DarkBgBase
 import com.example.ui.theme.LightBgBase
 import kotlinx.coroutines.launch
@@ -186,6 +187,14 @@ fun HomeScreen(
                 // SECTION 6: PRACTICAL SUSTAINABILITY & 3 PILLARS
                 MsmePillarsSection(
                     isDarkTheme = isDarkTheme,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // SECTION 7: DON'T JUST SCRAP IT, TRANSFORM IT & FOOTER
+                TransformCtaAndFooterSection(
+                    isDarkTheme = isDarkTheme,
+                    onRegisterFeedClick = { showRegisterDialog = true },
+                    onExploreWhatWeDoClick = { showExploreSheet = true },
                     modifier = Modifier.fillMaxWidth()
                 )
 

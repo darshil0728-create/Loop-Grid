@@ -252,14 +252,14 @@ private fun StatColumn(
 
         Spacer(modifier = Modifier.height(3.dp))
 
-        // Subtitle: readable secondary text
+        // Subtitle: readable bold secondary text
         Text(
             text = subtitle,
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Bold,
             fontSize = 13.sp,
             lineHeight = 17.sp,
-            color = if (isDarkTheme) Slate400 else LightTextMuted
+            color = if (isDarkTheme) Color(0xFFE2E8F0) else LightTextHeadline
         )
     }
 }

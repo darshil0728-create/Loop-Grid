@@ -92,9 +92,9 @@ fun LoopGridHeader(
                 Text(
                     text = "Explore Demo",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = if (isDarkTheme) Slate300 else LightTextBody
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
                 )
             }
 
@@ -118,7 +118,7 @@ fun LoopGridHeader(
                 Text(
                     text = "Log In",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     color = if (isDarkTheme) CrispWhite else LightTextHeadline
                 )

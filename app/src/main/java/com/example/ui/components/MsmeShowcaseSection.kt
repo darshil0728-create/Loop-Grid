@@ -127,9 +127,10 @@ fun MsmeShowcaseSection(
             Text(
                 text = "Recovered steel coils and alloys re-manufactured by verified industrial fabrication partners.",
                 fontFamily = PlusJakartaSans,
-                fontSize = 13.sp,
-                lineHeight = 19.sp,
-                color = Color(0xCCF1F5F9),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = CrispWhite,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.widthIn(max = 560.dp)
             )

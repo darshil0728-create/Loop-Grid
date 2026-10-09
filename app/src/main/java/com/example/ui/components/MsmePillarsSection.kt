@@ -159,30 +159,30 @@ fun MsmePillarsSection(
                 Text(
                     text = "India's MSMEs are the backbone of its industrial economy, yet many businesses face challenges in managing unused materials, rising resource costs, fragmented recycling networks, transportation inefficiencies, and the growing need for sustainable operations. Valuable materials often go underutilised simply because the right connections, information, and infrastructure are missing.",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    lineHeight = 23.sp,
-                    color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.5.sp,
+                    lineHeight = 24.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                     textAlign = TextAlign.Center
                 )
 
                 Text(
                     text = "LoopGrid bridges this gap by transforming how industrial resources are identified, exchanged, recovered, and reused. Our AI-enabled platform connects MSMEs with relevant industrial buyers, processing units, and mobility partners, helping turn underutilised materials into potential sources of revenue and productive value.",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    lineHeight = 23.sp,
-                    color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.5.sp,
+                    lineHeight = 24.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                     textAlign = TextAlign.Center
                 )
 
                 Text(
                     text = "Through AI-assisted resource identification, digital resource inventories, intelligent matching, resource aggregation, coordinated logistics, and Digital Resource Passports, LoopGrid brings fragmented resource flows into a more organised and traceable circular system.",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 14.sp,
-                    lineHeight = 23.sp,
-                    color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.5.sp,
+                    lineHeight = 24.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                     textAlign = TextAlign.Center
                 )
             }
@@ -391,9 +391,10 @@ private fun ValueCreationTabContent(isDarkTheme: Boolean) {
                         Text(
                             text = desc,
                             fontFamily = PlusJakartaSans,
-                            fontSize = 13.sp,
-                            lineHeight = 19.sp,
-                            color = if (isDarkTheme) Color(0xB3CBD5E1) else LightTextBody
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.5.sp,
+                            lineHeight = 20.sp,
+                            color = if (isDarkTheme) Color(0xFFE2E8F0) else LightTextHeadline
                         )
                     }
                 }
@@ -477,10 +478,10 @@ private fun BeyondSustainabilityTabContent(isDarkTheme: Boolean) {
         Text(
             text = "LoopGrid is designed to make environmental responsibility work alongside business performance. By connecting fragmented MSME supply with industrial demand, we aim to create a network where one enterprise's underutilised material can become another enterprise's valuable input.",
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 22.sp,
-            color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.5.sp,
+            lineHeight = 23.sp,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -488,10 +489,10 @@ private fun BeyondSustainabilityTabContent(isDarkTheme: Boolean) {
         Text(
             text = "This approach supports a more resource-efficient, connected, and resilient industrial ecosystem — where sustainability is integrated into everyday operations rather than treated as a separate expense.",
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 22.sp,
-            color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.5.sp,
+            lineHeight = 23.sp,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -570,10 +571,10 @@ private fun NationsMissionTabContent(isDarkTheme: Boolean) {
         Text(
             text = "Aligned with the broader vision of Viksit Bharat 2047, LoopGrid seeks to support India's transition towards more competitive MSMEs, digitally enabled industrial operations, resource-efficient manufacturing, and a stronger circular economy.",
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 22.sp,
-            color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.5.sp,
+            lineHeight = 23.sp,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -581,10 +582,10 @@ private fun NationsMissionTabContent(isDarkTheme: Boolean) {
         Text(
             text = "Our ambition is to make the benefits of resource recovery more accessible to businesses of every scale, helping them create economic value while contributing to India's environmental and sustainable development goals.",
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 22.sp,
-            color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.5.sp,
+            lineHeight = 23.sp,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline
         )
 
         Spacer(modifier = Modifier.height(10.dp))

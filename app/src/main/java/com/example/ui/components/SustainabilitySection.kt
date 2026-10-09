@@ -151,14 +151,14 @@ fun SustainabilitySection(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // Detailed description paragraph
+            // Detailed description paragraph: bold and high-contrast
             Text(
                 text = "LoopGrid helps MSMEs turn unused resources into new value by identifying, aggregating and connecting them to the right industrial opportunities — making sustainability practical, profitable and traceable.",
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 15.sp,
-                lineHeight = 24.sp,
-                color = if (isDarkTheme) Color(0xCCF1F5F9) else LightTextBody,
+                lineHeight = 25.sp,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("sustainability_description")
@@ -190,9 +190,9 @@ fun SustainabilitySection(
                         Text(
                             text = point,
                             fontFamily = PlusJakartaSans,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            lineHeight = 22.sp,
                             color = if (isDarkTheme) CrispWhite else LightTextHeadline
                         )
                     }

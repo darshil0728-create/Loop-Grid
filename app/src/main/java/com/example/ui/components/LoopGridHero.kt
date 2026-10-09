@@ -218,11 +218,11 @@ fun LoopGridHero(
         Text(
             text = "LoopGrid helps businesses turn their leftover materials into value by connecting them with the right buyers, logistics, and reuse opportunities.",
             fontFamily = PlusJakartaSans,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 15.sp,
             lineHeight = 25.sp,
             textAlign = TextAlign.Center,
-            color = if (isDarkTheme) Slate100 else LightTextBody,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline,
             modifier = Modifier
                 .widthIn(max = 620.dp)
                 .fillMaxWidth()
@@ -359,9 +359,9 @@ fun LoopGridHero(
             Text(
                 text = "2,713+ enterprises have already upgraded their profits",
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
-                color = if (isDarkTheme) Slate200 else LightTextBody,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                 modifier = Modifier.offset(x = (-8).dp)
             )
 

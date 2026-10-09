@@ -203,15 +203,15 @@ fun HowItWorksSection(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // 3. Subtitle in smaller white text: "A SIMPLE 6 - STEP JOURNEY FROM RESOURCE TO RECOVERY"
+            // 3. Subtitle in bold text: "A SIMPLE 6 - STEP JOURNEY FROM RESOURCE TO RECOVERY"
             Text(
                 text = "A SIMPLE 6 - STEP JOURNEY FROM RESOURCE TO RECOVERY",
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 fontSize = 13.sp,
                 lineHeight = 18.sp,
                 letterSpacing = 0.8.sp,
-                color = if (isDarkTheme) Color(0xD9FFFFFF) else LightTextMuted,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -406,14 +406,14 @@ private fun JourneyStepCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Step Description
+            // Step Description: High contrast and bold
             Text(
                 text = step.description,
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 13.sp,
-                lineHeight = 19.sp,
-                color = if (isDarkTheme) Color(0xB3CBD5E1) else LightTextBody
+                lineHeight = 20.sp,
+                color = if (isDarkTheme) Color(0xFFE2E8F0) else LightTextHeadline
             )
         }
     }
