@@ -73,6 +73,7 @@ import com.example.ui.theme.LightBgBase
 import com.example.ui.theme.LightBorder
 import com.example.ui.theme.LightBorderStrong
 import com.example.ui.theme.LightEmerald
+import com.example.ui.theme.LightEmeraldDark
 import com.example.ui.theme.LightSurfaceCard
 import com.example.ui.theme.LightTextHeadline
 import com.example.ui.theme.PlusJakartaSans
@@ -104,6 +105,7 @@ fun SignUpScreen(
         password: String
     ) -> Unit,
     onNavigateToLogin: () -> Unit,
+    onExploreDemoClick: () -> Unit = {},
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -223,7 +225,66 @@ fun SignUpScreen(
                             color = if (isDarkTheme) Color(0xBF94A3B8) else Color(0xFF64748B)
                         )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // EXPLORE DEMO ACCOUNT Direct Access (No ID / Password required)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .shadow(
+                                    elevation = 6.dp,
+                                    shape = RoundedCornerShape(14.dp),
+                                    ambientColor = if (isDarkTheme) Color(0x4010B981) else Color(0x20059669)
+                                )
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(if (isDarkTheme) Color(0x33064E3B) else Color(0x2010B981))
+                                .border(1.5.dp, if (isDarkTheme) Color(0x6610B981) else Color(0x99059669), RoundedCornerShape(14.dp))
+                                .clickable { onExploreDemoClick() }
+                                .padding(horizontal = 16.dp, vertical = 14.dp)
+                                .testTag("btn_signup_explore_demo_account")
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "EXPLORE DEMO ACCOUNT",
+                                        fontFamily = PlusJakartaSans,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 13.sp,
+                                        color = if (isDarkTheme) EmeraldLight else LightEmeraldDark,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "Instant Access • No ID or Password Required",
+                                        fontFamily = PlusJakartaSans,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 11.sp,
+                                        color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                    )
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(if (isDarkTheme) EmeraldPrimary else LightEmerald)
+                                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                                ) {
+                                    Text(
+                                        text = "Open Demo →",
+                                        fontFamily = PlusJakartaSans,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp,
+                                        color = if (isDarkTheme) Slate950 else CrispWhite
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(22.dp))
 
                         // 1. Name of the Organisation
                         FormLabel("1. Name of the Organisation *", isDarkTheme)

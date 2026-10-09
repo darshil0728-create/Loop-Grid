@@ -92,6 +92,34 @@ class EnterpriseRepository(context: Context) {
         _currentProfile.value = updated
     }
 
+    /**
+     * Loads the fully populated demo enterprise account directly without requiring any password or ID.
+     */
+    fun loadDemoAccount(): EnterpriseProfile {
+        val demoProfile = EnterpriseProfile(
+            enterpriseName = "Shree Balaji Fabrication Works",
+            ownerName = "Rajesh Sharma",
+            orgType = "MSME (Small Enterprise - Investment < ₹10 Cr)",
+            orgNature = "Metal Fabrication & Scrap Recovery",
+            phone = "+91 98234 56789",
+            email = "contact@balajifabrication.in",
+            password = "password123",
+            dealingResources = listOf("Cold Rolled Steel Coils", "Mild Steel Turning Scrap", "Zinc Ash & Residues"),
+            address = "Plot No. D-42, MIDC Industrial Area, Bhosari, Pune, Maharashtra 411026",
+            registeredOffice = "Office 301, Trade Center, F.C. Road, Shivajinagar, Pune 411005",
+            branches = listOf("Chakan Auto Cluster Unit-2", "Ahmednagar Material Staging Hub"),
+            gstin = "27AAACB1234F1Z5",
+            udyamNumber = "UDYAM-MH-26-0034567",
+            annualVolumeTons = "450 Tons / Year",
+            pollutionClearanceStatus = "Consent to Operate (CTO) Valid up to 2028",
+            sustainabilityGoals = "Zero landfill disposal for metallic turnings; 100% circular traceability through DRPs.",
+            isDraft = false,
+            isRegistered = true
+        )
+        saveProfile(demoProfile, isDraft = false)
+        return demoProfile
+    }
+
     fun registerNewEnterprise(
         enterpriseName: String,
         ownerName: String,

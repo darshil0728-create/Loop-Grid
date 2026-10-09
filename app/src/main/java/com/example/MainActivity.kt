@@ -49,6 +49,10 @@ class MainActivity : ComponentActivity() {
                             onExploreHowLoopGridWorksClick = {
                                 currentScreen = AppScreen.WHAT_IS_LOOPGRID
                             },
+                            onExploreDemoClick = {
+                                enterpriseRepo.loadDemoAccount()
+                                currentScreen = AppScreen.DASHBOARD
+                            },
                             onLogInClick = {
                                 currentScreen = AppScreen.LOGIN
                             },
@@ -75,6 +79,10 @@ class MainActivity : ComponentActivity() {
                             onNavigateToSignUp = {
                                 currentScreen = AppScreen.SIGNUP
                             },
+                            onExploreDemoClick = {
+                                enterpriseRepo.loadDemoAccount()
+                                currentScreen = AppScreen.DASHBOARD
+                            },
                             onBack = { currentScreen = AppScreen.HOME }
                         )
                     }
@@ -96,6 +104,10 @@ class MainActivity : ComponentActivity() {
                             },
                             onNavigateToLogin = {
                                 currentScreen = AppScreen.LOGIN
+                            },
+                            onExploreDemoClick = {
+                                enterpriseRepo.loadDemoAccount()
+                                currentScreen = AppScreen.DASHBOARD
                             },
                             onBack = { currentScreen = AppScreen.HOME }
                         )

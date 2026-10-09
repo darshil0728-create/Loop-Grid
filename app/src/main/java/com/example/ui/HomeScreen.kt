@@ -54,6 +54,7 @@ fun HomeScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     onExploreHowLoopGridWorksClick: () -> Unit = {},
+    onExploreDemoClick: () -> Unit = {},
     onLogInClick: () -> Unit = {},
     onSignUpClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -120,7 +121,7 @@ fun HomeScreen(
                         LoopGridHeader(
                             isDarkTheme = isDarkTheme,
                             onToggleTheme = onToggleTheme,
-                            onExploreDemoClick = { showDemoTour = true },
+                            onExploreDemoClick = onExploreDemoClick,
                             onLogInClick = onLogInClick,
                             onSignUpClick = onSignUpClick,
                             modifier = Modifier.fillMaxWidth()
