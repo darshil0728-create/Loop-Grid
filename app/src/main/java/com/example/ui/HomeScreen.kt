@@ -38,6 +38,7 @@ import com.example.ui.components.IndustrialFactoryBackdrop
 import com.example.ui.components.LoopGridHeader
 import com.example.ui.components.LoopGridHero
 import com.example.ui.components.LoopGridLiveStatsBar
+import com.example.ui.components.MsmePillarsSection
 import com.example.ui.components.MsmeShowcaseSection
 import com.example.ui.components.RegisterFeedDialog
 import com.example.ui.components.StatDetailDialog
@@ -178,6 +179,12 @@ fun HomeScreen(
 
                 // SECTION 5: AI THAT TURNS EVIDENCE INTO ACTION
                 AiIntelligenceSection(
+                    isDarkTheme = isDarkTheme,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // SECTION 6: PRACTICAL SUSTAINABILITY & 3 PILLARS
+                MsmePillarsSection(
                     isDarkTheme = isDarkTheme,
                     modifier = Modifier.fillMaxWidth()
                 )
