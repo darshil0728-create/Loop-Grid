@@ -104,6 +104,7 @@ import com.example.ui.components.CommandCenterHeroCard
 import com.example.ui.components.DashboardLeftNavDrawer
 import com.example.ui.components.DashboardNavTab
 import com.example.ui.components.DashboardNotificationsSheet
+import com.example.ui.components.DashboardSearchableListComponent
 import com.example.ui.components.EnterpriseDrpSectionSheet
 import com.example.ui.components.FinancialPartnerCreditDesk
 import com.example.ui.components.ImpactOverviewRow
@@ -1823,7 +1824,36 @@ fun EnterpriseDashboardScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                // 4. Active Feeds & Digital Resource Passports Section
+                // 4. Real-time Searchable List for Resources & Connected Enterprises
+                DashboardSearchableListComponent(
+                    passports = enterpriseDrpsList,
+                    profile = profileState,
+                    isDarkTheme = isDarkTheme,
+                    onSelectDrp = { drp ->
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Opening Digital Passport ${drp.drpId} (${drp.materialName})")
+                        }
+                        drpSectionInitialTab = if (drp.status.isOutdated) 1 else 0
+                        showDrpSectionSheet = true
+                    },
+                    onConnectEnterprise = { enterprise ->
+                        addNotification(
+                            title = "Connection Request Sent: ${enterprise.enterpriseName}",
+                            description = "Circular connection request dispatched to ${enterprise.enterpriseName} in ${enterprise.location}.",
+                            category = NotificationCategory.MATERIAL_MATCH,
+                            isUrgent = false,
+                            actionLabel = "View Partner Slip"
+                        )
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Connected with ${enterprise.enterpriseName} (${enterprise.location})")
+                        }
+                    },
+                    onRegisterNewResource = { showRegisterDialog = true }
+                )
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // 5. Active Feeds & Digital Resource Passports Section
                 DashboardFeedsSummarySection(
                     passports = enterpriseDrpsList,
                     profile = profileState,
