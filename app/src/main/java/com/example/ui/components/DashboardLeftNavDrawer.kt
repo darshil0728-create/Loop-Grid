@@ -28,16 +28,20 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Handshake
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -75,17 +79,28 @@ enum class DashboardNavTab(
     val icon: ImageVector,
     val testTag: String
 ) {
-    HOME("Home", Icons.Default.Home, "nav_item_home"),
-    EXPLORE("Explore", Icons.Default.Explore, "nav_item_explore"),
-    REPORT("Report / Register", Icons.Default.PostAdd, "nav_item_report"),
-    MISSIONS("Missions", Icons.Default.TrackChanges, "nav_item_missions"),
-    PILOTS("DRP Passports", Icons.Default.QrCode2, "nav_item_pilots"),
-    MONITORING("Monitoring", Icons.Default.MonitorHeart, "nav_item_monitoring"),
-    RECOVERY("Recovery / Operations", Icons.Default.Autorenew, "nav_item_recovery"),
-    LEADERBOARD("Leaderboard", Icons.Default.EmojiEvents, "nav_item_leaderboard"),
+    // 1. Profile
+    PROFILE("Profile", Icons.Default.Person, "nav_item_profile"),
+    // 2. Log Out
+    LOGOUT("Log Out", Icons.Default.Logout, "nav_item_logout"),
+    // 3. Notification
     NOTIFICATIONS("Notifications & Alerts", Icons.Default.Notifications, "nav_item_notifications"),
-    ABOUT("About", Icons.Default.Info, "nav_item_about"),
-    PROFILE("Profile", Icons.Default.Person, "nav_item_profile")
+    // 4. Search Option (Search any DRP, resource, or enterprise)
+    SEARCH("Search Platform", Icons.Default.Search, "nav_item_search"),
+    // 5. Current DRP (Currently available lots of the enterprise)
+    CURRENT_DRP("Current DRPs", Icons.Default.Inventory2, "nav_item_current_drp"),
+    // 6. DRP History (Outdated & settled passports archive)
+    DRP_HISTORY("DRP History", Icons.Default.History, "nav_item_drp_history"),
+
+    // Platform Command Center & Ecosystem sections
+    HOME("Command Center", Icons.Default.Home, "nav_item_home"),
+    REPORT("Register Feed / DRP", Icons.Default.PostAdd, "nav_item_report"),
+    EXPLORE("Marketplace & Offtakers", Icons.Default.Explore, "nav_item_explore"),
+    MISSIONS("Missions & Logistics", Icons.Default.TrackChanges, "nav_item_missions"),
+    MONITORING("Compliance & Monitoring", Icons.Default.MonitorHeart, "nav_item_monitoring"),
+    RECOVERY("Recovery Operations", Icons.Default.Autorenew, "nav_item_recovery"),
+    LEADERBOARD("Cluster Leaderboard", Icons.Default.EmojiEvents, "nav_item_leaderboard"),
+    ABOUT("About LoopGrid", Icons.Default.Info, "nav_item_about")
 }
 
 /**

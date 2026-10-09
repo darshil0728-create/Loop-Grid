@@ -83,50 +83,25 @@ fun LoopGridHeader(
                 .horizontalScroll(rememberScrollState())
                 .testTag("nav_items_row")
         ) {
-            // "Explore Demo"
+            // Text "Explore Demo Account" button
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .clickable { onExploreDemoClick() }
                     .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .testTag("nav_explore_demo")
-            ) {
-                Text(
-                    text = "Explore Demo",
-                    fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                )
-            }
-
-            // "EXPLORE DEMO ACCOUNT" (Replaces Login & Sign Up, requires no ID or password)
-            Box(
-                modifier = Modifier
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(10.dp),
-                        ambientColor = if (isDarkTheme) Color(0x6610B981) else Color(0x40059669),
-                        spotColor = if (isDarkTheme) Color(0x8010B981) else Color(0x60059669)
-                    )
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(if (isDarkTheme) EmeraldPrimary else LightEmerald)
-                    .clickable { onExploreDemoClick() }
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
                     .testTag("nav_explore_demo_account"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "EXPLORE DEMO ACCOUNT",
+                    text = "Explore Demo Account",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 12.sp,
-                    color = if (isDarkTheme) Slate950 else CrispWhite,
-                    letterSpacing = 0.5.sp
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
                 )
             }
 
-            // Compact "Log In / Sign Up" option for custom account creation
+            // Separate "Login" button
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
@@ -139,16 +114,41 @@ fun LoopGridHeader(
                         if (isDarkTheme) Color(0x220F172A) else LightSurfaceCard
                     )
                     .clickable { onLogInClick() }
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .testTag("nav_login_signup_link"),
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .testTag("nav_login_button"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Login / Sign Up",
+                    text = "Login",
                     fontFamily = PlusJakartaSans,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                )
+            }
+
+            // Separate "Sign Up" button (prominent emerald style)
+            Box(
+                modifier = Modifier
+                    .shadow(
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(8.dp),
+                        ambientColor = if (isDarkTheme) Color(0x5510B981) else Color(0x35059669),
+                        spotColor = if (isDarkTheme) Color(0x7710B981) else Color(0x50059669)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (isDarkTheme) EmeraldPrimary else LightEmerald)
+                    .clickable { onSignUpClick() }
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .testTag("nav_signup_button"),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Sign Up",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 13.sp,
+                    color = if (isDarkTheme) Slate950 else CrispWhite
                 )
             }
 

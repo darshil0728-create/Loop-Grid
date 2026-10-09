@@ -67,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.EnterpriseProfile
 import com.example.data.EnterpriseRole
 import com.example.ui.theme.CrispWhite
+import com.example.ui.theme.DarkSurfaceCard
 import com.example.ui.theme.EmeraldLight
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.LightBorder
@@ -95,7 +96,7 @@ fun CommandCenterHeroCard(
 
     val cardBgBrush = Brush.verticalGradient(
         colors = if (isDarkTheme) {
-            listOf(Color(0xFF0A2218), Color(0xFF06140F))
+            listOf(Color(0xFF1E293B), Color(0xFF142032))
         } else {
             listOf(Color(0xFFDCFCE7), Color(0xFFF0FDF4))
         }
@@ -107,7 +108,7 @@ fun CommandCenterHeroCard(
             .clip(RoundedCornerShape(22.dp))
             .border(
                 1.5.dp,
-                if (isDarkTheme) Color(0x4410B981) else Color(0x66059669),
+                if (isDarkTheme) Color(0x6610B981) else Color(0x66059669),
                 RoundedCornerShape(22.dp)
             )
             .background(cardBgBrush)
@@ -245,8 +246,8 @@ fun CommandCenterHeroCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(if (isDarkTheme) Color(0x6007130D) else Color(0x40F0FDF4))
-                    .border(1.dp, if (isDarkTheme) Color(0x2210B981) else Color(0x2E059669), RoundedCornerShape(14.dp))
+                    .background(if (isDarkTheme) Color(0xFF0F172A) else Color(0x40F0FDF4))
+                    .border(1.dp, if (isDarkTheme) Color(0x4D10B981) else Color(0x2E059669), RoundedCornerShape(14.dp))
                     .padding(14.dp)
             ) {
                 Row(
@@ -326,7 +327,7 @@ fun CommandCenterHeroCard(
                             imageVector = when (role) {
                                 EnterpriseRole.RESOURCE_PROVIDER -> Icons.Default.Eco
                                 EnterpriseRole.TRANSIT_PARTNER -> Icons.Default.LocalShipping
-                                EnterpriseRole.PROCESSING_ENTERPRISE -> Icons.Default.Autorenew
+                                EnterpriseRole.PROCESSING_ENTERPRISE -> Icons.Default.PrecisionManufacturing
                                 EnterpriseRole.FINANCIAL_PARTNER -> Icons.Default.AccountBalance
                             },
                             contentDescription = null,
@@ -420,10 +421,10 @@ fun ImpactOverviewRow(
                         .clip(RoundedCornerShape(14.dp))
                         .border(
                             1.dp,
-                            if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0),
+                            if (isDarkTheme) Color(0xFF334155) else Color(0xFFE2E8F0),
                             RoundedCornerShape(14.dp)
                         )
-                        .background(if (isDarkTheme) Color(0xFF0D1714) else LightSurfaceCard)
+                        .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
                         .padding(10.dp)
                 ) {
                     Column {
@@ -486,10 +487,10 @@ fun SurveillancePipelineHealth(
             .clip(RoundedCornerShape(18.dp))
             .border(
                 1.dp,
-                if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0),
+                if (isDarkTheme) Color(0xFF334155) else Color(0xFFE2E8F0),
                 RoundedCornerShape(18.dp)
             )
-            .background(if (isDarkTheme) Color(0xFF0A120E) else LightSurfaceCard)
+            .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
             .padding(18.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -643,7 +644,7 @@ fun NextBestActionCard(
                 if (isDarkTheme) Color(0x6610B981) else Color(0x99059669),
                 RoundedCornerShape(18.dp)
             )
-            .background(if (isDarkTheme) Color(0xF0071C14) else Color(0xFFF0FDF4))
+            .background(if (isDarkTheme) Color(0xFF132A22) else Color(0xFFF0FDF4))
             .padding(18.dp)
             .testTag("next_best_action_card")
     ) {
@@ -1054,10 +1055,10 @@ private fun NearbyActionCard(
             .clip(RoundedCornerShape(16.dp))
             .border(
                 1.dp,
-                if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0),
+                if (isDarkTheme) Color(0xFF334155) else Color(0xFFE2E8F0),
                 RoundedCornerShape(16.dp)
             )
-            .background(if (isDarkTheme) Color(0xFF0C1612) else LightSurfaceCard)
+            .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -1172,8 +1173,8 @@ fun RecentRecoveriesCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
-            .border(1.dp, if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0), RoundedCornerShape(18.dp))
-            .background(if (isDarkTheme) Color(0xFF0B1410) else LightSurfaceCard)
+            .border(1.dp, if (isDarkTheme) Color(0xFF334155) else Color(0xFFE2E8F0), RoundedCornerShape(18.dp))
+            .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
             .padding(18.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {

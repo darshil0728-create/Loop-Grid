@@ -73,6 +73,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,25 +91,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.DashboardNotification
+import com.example.data.DigitalResourcePassport
+import com.example.data.DrpStatus
 import com.example.data.EnterpriseProfile
 import com.example.data.EnterpriseRole
 import com.example.data.NotificationCategory
 import com.example.data.PopularIndustrialResources
 import com.example.data.getInitialDashboardNotifications
+import com.example.data.getInitialEnterpriseDrps
 import com.example.ui.components.ActionNeededNearbySection
 import com.example.ui.components.CommandCenterHeroCard
 import com.example.ui.components.DashboardLeftNavDrawer
 import com.example.ui.components.DashboardNavTab
 import com.example.ui.components.DashboardNotificationsSheet
+import com.example.ui.components.EnterpriseDrpSectionSheet
 import com.example.ui.components.FinancialPartnerCreditDesk
 import com.example.ui.components.ImpactOverviewRow
 import com.example.ui.components.NextBestActionCard
+import com.example.ui.components.PlatformGlobalSearchSheet
 import com.example.ui.components.RecentRecoveriesCard
 import com.example.ui.components.RegisterFeedDialog
 import com.example.ui.components.SurveillancePipelineHealth
 import java.util.UUID
 import com.example.ui.theme.CrispWhite
 import com.example.ui.theme.DarkBgBase
+import com.example.ui.theme.DarkSurfaceCard
 import com.example.ui.theme.EmeraldLight
 import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.LightBgBase
@@ -120,6 +127,7 @@ import com.example.ui.theme.LightSurfaceCard
 import com.example.ui.theme.LightTextHeadline
 import com.example.ui.theme.PlusJakartaSans
 import com.example.ui.theme.Slate200
+import com.example.ui.theme.Slate300
 import com.example.ui.theme.Slate400
 import com.example.ui.theme.Slate700
 import com.example.ui.theme.Slate950
@@ -138,6 +146,618 @@ import kotlinx.coroutines.launch
  *    - "Edit whenever they want" capability
  * 3. Quick action to register by-product resources & Digital Resource Passports
  */
+@Composable
+private fun DashboardIdentityCard(
+    profile: EnterpriseProfile,
+    isDarkTheme: Boolean,
+    completionPercent: Int,
+    onRegisterFeedClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .widthIn(max = 840.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .border(1.dp, if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0), RoundedCornerShape(20.dp))
+            .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
+            .padding(22.dp)
+            .testTag("dashboard_identity_card")
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = profile.enterpriseName.ifBlank { "Registered Enterprise" },
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 22.sp,
+                        color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Role pill and category badges neatly placed below the Enterprise Name
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (isDarkTheme) Color(0x2E10B981) else Color(0x1F059669))
+                                .border(1.dp, if (isDarkTheme) Color(0x5510B981) else Color(0x4D059669), RoundedCornerShape(6.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = profile.role.shortTitle,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 11.sp,
+                                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (isDarkTheme) Color(0x22334155) else Color(0xFFF1F5F9))
+                                .border(1.dp, if (isDarkTheme) Color(0x33475569) else Color(0xFFCBD5E1), RoundedCornerShape(6.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = profile.orgType,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 11.sp,
+                                color = if (isDarkTheme) Slate300 else Color(0xFF475569)
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(if (isDarkTheme) Color(0x263B82F6) else Color(0x1F2563EB))
+                                .border(1.dp, if (isDarkTheme) Color(0x4D3B82F6) else Color(0x4D2563EB), RoundedCornerShape(6.dp))
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = profile.orgNature,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 11.sp,
+                                color = if (isDarkTheme) Color(0xFF60A5FA) else Color(0xFF2563EB)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Owner: ${profile.ownerName.ifBlank { "Not Specified" }}",
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp,
+                            color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = profile.phone.ifBlank { "+91..." },
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp,
+                            color = if (isDarkTheme) Color(0xFFE2E8F0) else Color(0xFF475569)
+                        )
+                    }
+                }
+
+                // Register Feed Action
+                Button(
+                    onClick = onRegisterFeedClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.testTag("btn_dashboard_register_feed")
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "Register Feed",
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        color = if (isDarkTheme) Slate950 else CrispWhite
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardFeedsSummarySection(
+    passports: List<DigitalResourcePassport>,
+    profile: EnterpriseProfile,
+    isDarkTheme: Boolean,
+    onRegisterNewFeed: () -> Unit,
+    onOpenDrpSection: (initialTab: Int) -> Unit
+) {
+    val currentDrps = passports.filter { !it.status.isOutdated }
+    val historyDrps = passports.filter { it.status.isOutdated }
+
+    Column(
+        modifier = Modifier
+            .widthIn(max = 840.dp)
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = "ACTIVE RESOURCE FEEDS & PASSPORTS",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    letterSpacing = 1.0.sp,
+                    color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                )
+                Text(
+                    text = "Tracked Circular Streams",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 20.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                )
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = { onOpenDrpSection(1) },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.testTag("btn_view_drp_history")
+                ) {
+                    Text("History (${historyDrps.size})", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Button(
+                    onClick = onRegisterNewFeed,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.testTag("btn_dashboard_generate_drp")
+                ) {
+                    Icon(Icons.Default.QrCode2, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "New Passport",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDarkTheme) Slate950 else CrispWhite
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Display up to 2 active passport cards with click to open full DRP sheet
+        val displayDrps = currentDrps.take(2)
+        if (displayDrps.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .border(1.dp, if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
+                    .padding(20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No current DRPs. Register a resource feed to generate your first passport.",
+                    fontFamily = PlusJakartaSans,
+                    fontSize = 13.sp,
+                    color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                )
+            }
+        } else {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                displayDrps.forEach { item ->
+                    FeedPassportCard(
+                        drpId = item.drpId,
+                        material = item.materialName,
+                        volume = "${item.quantityValue} ${item.quantityUnit}",
+                        status = item.status.label,
+                        statusColor = Color(0xFF10B981),
+                        isDarkTheme = isDarkTheme,
+                        onClick = { onOpenDrpSection(0) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeedPassportCard(
+    drpId: String,
+    material: String,
+    volume: String,
+    status: String,
+    statusColor: Color,
+    isDarkTheme: Boolean,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .border(1.dp, if (isDarkTheme) Color(0x33334155) else Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
+            .background(if (isDarkTheme) DarkSurfaceCard else Color.White)
+            .clickable { onClick() }
+            .padding(16.dp)
+            .testTag("feed_card_${drpId.lowercase()}")
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = drpId,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(statusColor.copy(alpha = 0.15f))
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    Text(
+                        text = status,
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = statusColor
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = material,
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Volume: $volume",
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+            )
+        }
+    }
+}
+
+@Composable
+private fun SectionSubhead(title: String, subtitle: String, isDarkTheme: Boolean) {
+    Text(
+        text = title,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 15.sp,
+        color = if (isDarkTheme) CrispWhite else LightTextHeadline
+    )
+    Spacer(modifier = Modifier.height(2.dp))
+    Text(
+        text = subtitle,
+        fontFamily = PlusJakartaSans,
+        fontSize = 12.sp,
+        color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+    )
+}
+
+@Composable
+private fun FormLabel(label: String, isDarkTheme: Boolean) {
+    Text(
+        text = label,
+        fontFamily = PlusJakartaSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 12.sp,
+        color = if (isDarkTheme) CrispWhite else LightTextHeadline
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+}
+
+@Composable
+private fun dashboardTextFieldColors(isDarkTheme: Boolean) = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = if (isDarkTheme) EmeraldLight else LightEmerald,
+    unfocusedBorderColor = if (isDarkTheme) Color(0xFF334155) else Color(0xFFCBD5E1),
+    focusedTextColor = if (isDarkTheme) CrispWhite else LightTextHeadline,
+    unfocusedTextColor = if (isDarkTheme) CrispWhite else LightTextHeadline,
+    disabledTextColor = if (isDarkTheme) Color(0xD9CBD5E1) else LightTextHeadline,
+    focusedContainerColor = if (isDarkTheme) Color(0xFF1E293B) else Color(0xFFF8FAFC),
+    unfocusedContainerColor = if (isDarkTheme) Color(0xFF162032) else Color(0xFFF8FAFC),
+    disabledContainerColor = if (isDarkTheme) Color(0xFF0F172A) else Color(0xFFF1F5F9)
+)
+
+private data class AlertVisuals(
+    val accent: Color,
+    val bg: Color,
+    val icon: ImageVector,
+    val tag: String
+)
+
+@Composable
+private fun DashboardLiveAlertBanner(
+    latestAlert: DashboardNotification?,
+    totalUnreadCount: Int,
+    isDarkTheme: Boolean,
+    onOpenAllNotifications: () -> Unit,
+    onActionClick: (DashboardNotification) -> Unit,
+    onDismiss: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    if (latestAlert == null) {
+        // Clean status strip when all alerts are caught up
+        Box(
+            modifier = modifier
+                .widthIn(max = 840.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(if (isDarkTheme) Color(0x2210B981) else Color(0x15059669))
+                .border(1.dp, if (isDarkTheme) Color(0x3310B981) else Color(0x2E059669), RoundedCornerShape(12.dp))
+                .clickable { onOpenAllNotifications() }
+                .padding(horizontal = 14.dp, vertical = 10.dp)
+                .testTag("dashboard_all_clear_status")
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Matching engine active • Passports & records up-to-date",
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                    )
+                }
+
+                Text(
+                    text = "View Alerts →",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                )
+            }
+        }
+        return
+    }
+
+    val visuals = when (latestAlert.category) {
+        NotificationCategory.MATERIAL_MATCH -> AlertVisuals(
+            accent = Color(0xFF10B981),
+            bg = if (isDarkTheme) Color(0xFF132A24) else Color(0xFFF0FDF4),
+            icon = Icons.Default.Handshake,
+            tag = "MATERIAL MATCH FOUND"
+        )
+        NotificationCategory.DRP_ACTION -> AlertVisuals(
+            accent = Color(0xFFF59E0B),
+            bg = if (isDarkTheme) Color(0xFF292212) else Color(0xFFFFFBEB),
+            icon = Icons.Default.QrCode2,
+            tag = "DRP ACTION REQUIRED"
+        )
+        NotificationCategory.PROFILE_RESOURCE -> AlertVisuals(
+            accent = Color(0xFF8B5CF6),
+            bg = if (isDarkTheme) Color(0xFF241C38) else Color(0xFFFAF5FF),
+            icon = Icons.Default.Settings,
+            tag = "PROFILE & RESOURCE UPDATE"
+        )
+        NotificationCategory.ALL -> AlertVisuals(
+            accent = Color(0xFF3B82F6),
+            bg = if (isDarkTheme) Color(0xFF19263D) else Color(0xFFEFF6FF),
+            icon = Icons.Default.Notifications,
+            tag = "ALERT"
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .widthIn(max = 840.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                visuals.accent.copy(alpha = if (isDarkTheme) 0.6f else 0.8f),
+                RoundedCornerShape(16.dp)
+            )
+            .background(visuals.bg)
+            .padding(16.dp)
+            .testTag("dashboard_live_alert_banner")
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(visuals.accent.copy(alpha = 0.2f))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = visuals.icon,
+                                contentDescription = null,
+                                tint = visuals.accent,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = visuals.tag,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 10.sp,
+                                color = visuals.accent,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
+                    }
+
+                    if (latestAlert.isUrgent) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(Color(0x33EF4444))
+                                .padding(horizontal = 6.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "HIGH PRIORITY",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 9.sp,
+                                color = Color(0xFFEF4444)
+                            )
+                        }
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = latestAlert.timestamp,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
+                        color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    IconButton(
+                        onClick = { onDismiss(latestAlert.id) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Dismiss",
+                            tint = if (isDarkTheme) Slate400 else Color(0xFF94A3B8),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = latestAlert.title,
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 15.sp,
+                color = if (isDarkTheme) CrispWhite else LightTextHeadline
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = latestAlert.description,
+                fontFamily = PlusJakartaSans,
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                lineHeight = 17.sp,
+                color = if (isDarkTheme) Color(0xCCF1F5F9) else Color(0xFF334155)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Secondary action: Open all notifications
+                Text(
+                    text = "View All Alerts ($totalUnreadCount unread) →",
+                    fontFamily = PlusJakartaSans,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = visuals.accent,
+                    modifier = Modifier
+                        .clickable { onOpenAllNotifications() }
+                        .padding(vertical = 4.dp)
+                )
+
+                if (latestAlert.actionLabel != null) {
+                    Button(
+                        onClick = { onActionClick(latestAlert) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = visuals.accent,
+                            contentColor = if (latestAlert.category == NotificationCategory.MATERIAL_MATCH) Slate950 else CrispWhite
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.height(34.dp)
+                    ) {
+                        Text(
+                            text = latestAlert.actionLabel,
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EnterpriseDashboardScreen(
@@ -179,6 +799,12 @@ fun EnterpriseDashboardScreen(
     // Notification System State
     var notificationsList by remember { mutableStateOf(getInitialDashboardNotifications()) }
     var showNotificationsSheet by remember { mutableStateOf(false) }
+
+    // Platform DRP Passports & Search System State
+    var enterpriseDrpsList by remember { mutableStateOf(getInitialEnterpriseDrps()) }
+    var showGlobalSearchSheet by remember { mutableStateOf(false) }
+    var showDrpSectionSheet by remember { mutableStateOf(false) }
+    var drpSectionInitialTab by remember { mutableIntStateOf(0) } // 0 = Current DRPs, 1 = DRP History
 
     fun addNotification(
         title: String,
@@ -222,9 +848,9 @@ fun EnterpriseDashboardScreen(
 
     val bgBrush = Brush.verticalGradient(
         colors = if (isDarkTheme) {
-            listOf(Color(0xFF060B0E), Color(0xFF091410), Color(0xFF050907))
+            listOf(Color(0xFF0F172A), Color(0xFF131D31), Color(0xFF0B1324))
         } else {
-            listOf(Color(0xFFF0FDF4), Color(0xFFF8FAFC), Color(0xFFF1F5F9))
+            listOf(Color(0xFFF8FAFC), Color(0xFFF1F5F9), Color(0xFFF0FDF4))
         }
     )
 
@@ -237,17 +863,31 @@ fun EnterpriseDashboardScreen(
                     currentNavTab = tab
                     coroutineScope.launch { drawerState.close() }
                     when (tab) {
-                        DashboardNavTab.NOTIFICATIONS -> {
-                            showNotificationsSheet = true
-                        }
-                        DashboardNavTab.REPORT -> {
-                            showRegisterDialog = true
-                        }
                         DashboardNavTab.PROFILE -> {
                             isEditingProfile = true
                             coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Opening enterprise profile credentials.")
+                                snackbarHostState.showSnackbar("Opening Enterprise Profile: edit details, branches & resources anytime.")
                             }
+                        }
+                        DashboardNavTab.LOGOUT -> {
+                            onLogout()
+                        }
+                        DashboardNavTab.NOTIFICATIONS -> {
+                            showNotificationsSheet = true
+                        }
+                        DashboardNavTab.SEARCH -> {
+                            showGlobalSearchSheet = true
+                        }
+                        DashboardNavTab.CURRENT_DRP -> {
+                            drpSectionInitialTab = 0
+                            showDrpSectionSheet = true
+                        }
+                        DashboardNavTab.DRP_HISTORY -> {
+                            drpSectionInitialTab = 1
+                            showDrpSectionSheet = true
+                        }
+                        DashboardNavTab.REPORT -> {
+                            showRegisterDialog = true
                         }
                         DashboardNavTab.EXPLORE -> {
                             coroutineScope.launch {
@@ -257,11 +897,6 @@ fun EnterpriseDashboardScreen(
                         DashboardNavTab.MISSIONS -> {
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Viewing nearby cleanup and transit missions.")
-                            }
-                        }
-                        DashboardNavTab.PILOTS -> {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Digital Resource Passports (DRPs): Real-time circular ledger active.")
                             }
                         }
                         DashboardNavTab.MONITORING -> {
@@ -388,25 +1023,10 @@ fun EnterpriseDashboardScreen(
                                     text = profileState.enterpriseName.ifBlank { "My Enterprise" },
                                     fontFamily = PlusJakartaSans,
                                     fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 16.sp,
+                                    fontSize = 15.sp,
                                     color = if (isDarkTheme) CrispWhite else LightTextHeadline
                                 )
-                            }
-                        }
 
-                        // Top Bar Action Buttons: Role Pill, Notifications Bell & Logout
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Active Role Pill
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(if (isDarkTheme) Color(0x3310B981) else Color(0x2010B981))
-                                    .border(1.dp, if (isDarkTheme) Color(0x5510B981) else Color(0x4D059669), RoundedCornerShape(20.dp))
-                                    .padding(horizontal = 10.dp, vertical = 5.dp)
-                            ) {
                                 Text(
                                     text = profileState.role.shortTitle,
                                     fontFamily = PlusJakartaSans,
@@ -415,7 +1035,13 @@ fun EnterpriseDashboardScreen(
                                     color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
                                 )
                             }
+                        }
 
+                        // Top Bar Action Buttons: Notifications Bell & Logout
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             // Notifications button with badge
                             Box(contentAlignment = Alignment.TopEnd) {
                                 IconButton(
@@ -493,7 +1119,7 @@ fun EnterpriseDashboardScreen(
                                         if (isCurrent) {
                                             if (isDarkTheme) EmeraldPrimary else LightEmerald
                                         } else {
-                                            if (isDarkTheme) Color(0xFF13201B) else Color(0xFFE2E8F0)
+                                            if (isDarkTheme) Color(0xFF1E293B) else Color(0xFFE2E8F0)
                                         }
                                     )
                                     .border(
@@ -689,10 +1315,10 @@ fun EnterpriseDashboardScreen(
                         .clip(RoundedCornerShape(20.dp))
                         .border(
                             1.dp,
-                            if (isDarkTheme) Color(0x33334155) else LightBorder,
+                            if (isDarkTheme) Color(0xFF334155) else LightBorder,
                             RoundedCornerShape(20.dp)
                         )
-                        .background(if (isDarkTheme) Color(0xF80E1714) else LightSurfaceCard)
+                        .background(if (isDarkTheme) DarkSurfaceCard else LightSurfaceCard)
                         .padding(24.dp)
                         .testTag("complete_profile_card")
                 ) {
@@ -953,8 +1579,8 @@ fun EnterpriseDashboardScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .clip(RoundedCornerShape(8.dp))
-                                            .background(if (isDarkTheme) Color(0x330B120F) else Color(0xFFF8FAFC))
-                                            .border(1.dp, if (isDarkTheme) Color(0x22334155) else Color(0xFFE2E8F0), RoundedCornerShape(8.dp))
+                                            .background(if (isDarkTheme) Color(0xFF1E293B) else Color(0xFFF8FAFC))
+                                            .border(1.dp, if (isDarkTheme) Color(0xFF334155) else Color(0xFFE2E8F0), RoundedCornerShape(8.dp))
                                             .padding(horizontal = 12.dp, vertical = 8.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
@@ -1199,9 +1825,14 @@ fun EnterpriseDashboardScreen(
 
                 // 4. Active Feeds & Digital Resource Passports Section
                 DashboardFeedsSummarySection(
+                    passports = enterpriseDrpsList,
                     profile = profileState,
                     isDarkTheme = isDarkTheme,
-                    onRegisterNewFeed = { showRegisterDialog = true }
+                    onRegisterNewFeed = { showRegisterDialog = true },
+                    onOpenDrpSection = { initialTab ->
+                        drpSectionInitialTab = initialTab
+                        showDrpSectionSheet = true
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(40.dp))
@@ -1216,6 +1847,21 @@ fun EnterpriseDashboardScreen(
             onDismiss = { showRegisterDialog = false },
             onSubmitSuccess = { material, tons, district ->
                 val drpCode = "DRP-${district.uppercase().take(3)}-2026-${(1000..9999).random()}"
+                val newPassport = DigitalResourcePassport(
+                    drpId = drpCode,
+                    materialName = material,
+                    materialCategory = "Industrial By-Product",
+                    quantityValue = tons,
+                    quantityUnit = "Tons",
+                    enterpriseName = profileState.enterpriseName.ifBlank { "Registered Enterprise" },
+                    originDistrict = district,
+                    originState = "Maharashtra",
+                    purityGrade = "Standard Processing Grade",
+                    status = DrpStatus.AVAILABLE,
+                    issuanceDate = "Today",
+                    notes = "Newly issued Digital Resource Passport. Ready for marketplace matching."
+                )
+                enterpriseDrpsList = listOf(newPassport) + enterpriseDrpsList
                 addNotification(
                     title = "Digital Resource Passport Generated",
                     description = "Passport $drpCode issued for $tons Tons of $material in $district. Ready for verified circular offtake.",
@@ -1309,559 +1955,36 @@ fun EnterpriseDashboardScreen(
             }
         )
     }
-}
 
-@Composable
-private fun DashboardIdentityCard(
-    profile: EnterpriseProfile,
-    isDarkTheme: Boolean,
-    completionPercent: Int,
-    onRegisterFeedClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .widthIn(max = 840.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .border(1.dp, if (isDarkTheme) Color(0x3310B981) else Color(0x4D059669), RoundedCornerShape(20.dp))
-            .background(if (isDarkTheme) Color(0xF80B1411) else LightSurfaceCard)
-            .padding(22.dp)
-            .testTag("dashboard_identity_card")
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(if (isDarkTheme) Color(0x3310B981) else Color(0x1F059669))
-                                .border(1.dp, if (isDarkTheme) Color(0x5510B981) else Color(0x4D059669), RoundedCornerShape(6.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = profile.orgType,
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp,
-                                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(if (isDarkTheme) Color(0x333B82F6) else Color(0x1F2563EB))
-                                .border(1.dp, if (isDarkTheme) Color(0x553B82F6) else Color(0x4D2563EB), RoundedCornerShape(6.dp))
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = profile.orgNature,
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 11.sp,
-                                color = if (isDarkTheme) Color(0xFF60A5FA) else Color(0xFF2563EB)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Text(
-                        text = profile.enterpriseName.ifBlank { "Registered Enterprise" },
-                        fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 22.sp,
-                        color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = if (isDarkTheme) EmeraldLight else LightEmerald,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Owner: ${profile.ownerName.ifBlank { "Not Specified" }}",
-                            fontFamily = PlusJakartaSans,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 13.sp,
-                            color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Icon(
-                            imageVector = Icons.Default.Phone,
-                            contentDescription = null,
-                            tint = if (isDarkTheme) EmeraldLight else LightEmerald,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = profile.phone.ifBlank { "+91..." },
-                            fontFamily = PlusJakartaSans,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 13.sp,
-                            color = if (isDarkTheme) Color(0xFFE2E8F0) else Color(0xFF475569)
-                        )
-                    }
-                }
-
-                // Register Feed Action
-                Button(
-                    onClick = onRegisterFeedClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.testTag("btn_dashboard_register_feed")
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Register Feed",
-                        fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = if (isDarkTheme) Slate950 else CrispWhite
-                    )
+    // Platform Global Search Sheet (Search any DRP, Resource, or Enterprise)
+    if (showGlobalSearchSheet) {
+        PlatformGlobalSearchSheet(
+            passports = enterpriseDrpsList,
+            isDarkTheme = isDarkTheme,
+            onDismiss = { showGlobalSearchSheet = false },
+            onSelectDrp = { drp ->
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar("Inspecting Passport: ${drp.drpId} - ${drp.materialName}")
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun DashboardFeedsSummarySection(
-    profile: EnterpriseProfile,
-    isDarkTheme: Boolean,
-    onRegisterNewFeed: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .widthIn(max = 840.dp)
-            .fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "ACTIVE RESOURCE FEEDS & PASSPORTS",
-                    fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    letterSpacing = 1.0.sp,
-                    color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
-                )
-                Text(
-                    text = "Tracked Circular Streams",
-                    fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp,
-                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                )
-            }
-
-            OutlinedButton(
-                onClick = onRegisterNewFeed,
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Icon(Icons.Default.QrCode2, contentDescription = null, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(6.dp))
-                Text("Generate Passport", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // Sample Active Passport Cards
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            FeedPassportCard(
-                drpId = "DRP-MH-2026-9041",
-                material = "Cold Rolled Steel Trimmings",
-                volume = "38.5 Tons",
-                status = "Offtake Match Verified",
-                statusColor = Color(0xFF10B981),
-                isDarkTheme = isDarkTheme,
-                modifier = Modifier.weight(1f)
-            )
-
-            FeedPassportCard(
-                drpId = "DRP-MH-2026-8812",
-                material = "Zinc Residue & Ash",
-                volume = "14.2 Tons",
-                status = "Logistics Coordinated",
-                statusColor = Color(0xFF3B82F6),
-                isDarkTheme = isDarkTheme,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun FeedPassportCard(
-    drpId: String,
-    material: String,
-    volume: String,
-    status: String,
-    statusColor: Color,
-    isDarkTheme: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(14.dp))
-            .border(1.dp, if (isDarkTheme) Color(0x22334155) else Color(0xFFE2E8F0), RoundedCornerShape(14.dp))
-            .background(if (isDarkTheme) Color(0xFF0F1822) else Color.White)
-            .padding(16.dp)
-    ) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = drpId,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp,
-                    color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(statusColor.copy(alpha = 0.15f))
-                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = status,
-                        fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 10.sp,
-                        color = statusColor
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = material,
-                fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-                color = if (isDarkTheme) CrispWhite else LightTextHeadline
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = "Volume: $volume",
-                fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
-                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
-            )
-        }
-    }
-}
-
-@Composable
-private fun SectionSubhead(title: String, subtitle: String, isDarkTheme: Boolean) {
-    Text(
-        text = title,
-        fontFamily = PlusJakartaSans,
-        fontWeight = FontWeight.Bold,
-        fontSize = 15.sp,
-        color = if (isDarkTheme) CrispWhite else LightTextHeadline
-    )
-    Spacer(modifier = Modifier.height(2.dp))
-    Text(
-        text = subtitle,
-        fontFamily = PlusJakartaSans,
-        fontSize = 12.sp,
-        color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
-    )
-}
-
-@Composable
-private fun FormLabel(label: String, isDarkTheme: Boolean) {
-    Text(
-        text = label,
-        fontFamily = PlusJakartaSans,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 12.sp,
-        color = if (isDarkTheme) CrispWhite else LightTextHeadline
-    )
-    Spacer(modifier = Modifier.height(4.dp))
-}
-
-@Composable
-private fun dashboardTextFieldColors(isDarkTheme: Boolean) = OutlinedTextFieldDefaults.colors(
-    focusedBorderColor = if (isDarkTheme) EmeraldLight else LightEmerald,
-    unfocusedBorderColor = if (isDarkTheme) Color(0x33334155) else Color(0xFFCBD5E1),
-    focusedTextColor = if (isDarkTheme) CrispWhite else LightTextHeadline,
-    unfocusedTextColor = if (isDarkTheme) CrispWhite else LightTextHeadline,
-    disabledTextColor = if (isDarkTheme) Color(0xD9CBD5E1) else LightTextHeadline,
-    focusedContainerColor = if (isDarkTheme) Color(0x330B120F) else Color(0xFFF8FAFC),
-    unfocusedContainerColor = if (isDarkTheme) Color(0x330B120F) else Color(0xFFF8FAFC),
-    disabledContainerColor = if (isDarkTheme) Color(0x220B120F) else Color(0xFFF1F5F9)
-)
-
-private data class AlertVisuals(
-    val accent: Color,
-    val bg: Color,
-    val icon: ImageVector,
-    val tag: String
-)
-
-@Composable
-private fun DashboardLiveAlertBanner(
-    latestAlert: DashboardNotification?,
-    totalUnreadCount: Int,
-    isDarkTheme: Boolean,
-    onOpenAllNotifications: () -> Unit,
-    onActionClick: (DashboardNotification) -> Unit,
-    onDismiss: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    if (latestAlert == null) {
-        // Clean status strip when all alerts are caught up
-        Box(
-            modifier = modifier
-                .widthIn(max = 840.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(if (isDarkTheme) Color(0x2210B981) else Color(0x15059669))
-                .border(1.dp, if (isDarkTheme) Color(0x3310B981) else Color(0x2E059669), RoundedCornerShape(12.dp))
-                .clickable { onOpenAllNotifications() }
-                .padding(horizontal = 14.dp, vertical = 10.dp)
-                .testTag("dashboard_all_clear_status")
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = if (isDarkTheme) EmeraldLight else LightEmerald,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Matching engine active • Passports & records up-to-date",
-                        fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
-                    )
-                }
-
-                Text(
-                    text = "View Alerts →",
-                    fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 11.sp,
-                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
-                )
-            }
-        }
-        return
-    }
-
-    val visuals = when (latestAlert.category) {
-        NotificationCategory.MATERIAL_MATCH -> AlertVisuals(
-            accent = Color(0xFF10B981),
-            bg = if (isDarkTheme) Color(0xF00A1813) else Color(0xFFF0FDF4),
-            icon = Icons.Default.Handshake,
-            tag = "MATERIAL MATCH FOUND"
-        )
-        NotificationCategory.DRP_ACTION -> AlertVisuals(
-            accent = Color(0xFFF59E0B),
-            bg = if (isDarkTheme) Color(0xF01C160B) else Color(0xFFFFFBEB),
-            icon = Icons.Default.QrCode2,
-            tag = "DRP ACTION REQUIRED"
-        )
-        NotificationCategory.PROFILE_RESOURCE -> AlertVisuals(
-            accent = Color(0xFF8B5CF6),
-            bg = if (isDarkTheme) Color(0xF014101F) else Color(0xFFFAF5FF),
-            icon = Icons.Default.Settings,
-            tag = "PROFILE & RESOURCE UPDATE"
-        )
-        NotificationCategory.ALL -> AlertVisuals(
-            accent = Color(0xFF3B82F6),
-            bg = if (isDarkTheme) Color(0xF00D1520) else Color(0xFFEFF6FF),
-            icon = Icons.Default.Notifications,
-            tag = "ALERT"
         )
     }
 
-    Box(
-        modifier = modifier
-            .widthIn(max = 840.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .border(
-                1.dp,
-                visuals.accent.copy(alpha = if (isDarkTheme) 0.6f else 0.8f),
-                RoundedCornerShape(16.dp)
-            )
-            .background(visuals.bg)
-            .padding(16.dp)
-            .testTag("dashboard_live_alert_banner")
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(visuals.accent.copy(alpha = 0.2f))
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = visuals.icon,
-                                contentDescription = null,
-                                tint = visuals.accent,
-                                modifier = Modifier.size(13.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = visuals.tag,
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 10.sp,
-                                color = visuals.accent,
-                                letterSpacing = 0.5.sp
-                            )
-                        }
-                    }
-
-                    if (latestAlert.isUrgent) {
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(Color(0x33EF4444))
-                                .padding(horizontal = 6.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = "HIGH PRIORITY",
-                                fontFamily = PlusJakartaSans,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 9.sp,
-                                color = Color(0xFFEF4444)
-                            )
-                        }
-                    }
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = latestAlert.timestamp,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 11.sp,
-                        color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    IconButton(
-                        onClick = { onDismiss(latestAlert.id) },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Dismiss",
-                            tint = if (isDarkTheme) Slate400 else Color(0xFF94A3B8),
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
+    // Enterprise DRP Section Sheet (Current DRPs vs DRP History)
+    if (showDrpSectionSheet) {
+        EnterpriseDrpSectionSheet(
+            passports = enterpriseDrpsList,
+            enterpriseName = profileState.enterpriseName,
+            isDarkTheme = isDarkTheme,
+            initialTab = drpSectionInitialTab,
+            onDismiss = { showDrpSectionSheet = false },
+            onGenerateNewPassport = {
+                showDrpSectionSheet = false
+                showRegisterDialog = true
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = latestAlert.title,
-                fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 15.sp,
-                color = if (isDarkTheme) CrispWhite else LightTextHeadline
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = latestAlert.description,
-                fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.Medium,
-                fontSize = 12.sp,
-                lineHeight = 17.sp,
-                color = if (isDarkTheme) Color(0xCCF1F5F9) else Color(0xFF334155)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Secondary action: Open all notifications
-                Text(
-                    text = "View All Alerts ($totalUnreadCount unread) →",
-                    fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = visuals.accent,
-                    modifier = Modifier
-                        .clickable { onOpenAllNotifications() }
-                        .padding(vertical = 4.dp)
-                )
-
-                if (latestAlert.actionLabel != null) {
-                    Button(
-                        onClick = { onActionClick(latestAlert) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = visuals.accent,
-                            contentColor = if (latestAlert.category == NotificationCategory.MATERIAL_MATCH) Slate950 else CrispWhite
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.height(34.dp)
-                    ) {
-                        Text(
-                            text = latestAlert.actionLabel,
-                            fontFamily = PlusJakartaSans,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
-                        )
-                    }
-                }
-            }
-        }
+        )
     }
+}
+
+
 }

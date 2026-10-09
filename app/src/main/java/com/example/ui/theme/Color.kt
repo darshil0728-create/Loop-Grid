@@ -2,16 +2,16 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// LoopGrid Ultra-High-Contrast Dark Palette (#0B0F19 Base)
-val DarkBgBase = Color(0xFF0B0F19)
-val DarkSurfaceCard = Color(0xF20F172A)
-val DarkSurfaceCardOpaque = Color(0xF80B1120)
-val DarkBorder = Color(0x66334155)
-val DarkBorderHighlight = Color(0x6610B981)
+// LoopGrid Modern High-Legibility Dark Palette (Premium Slate/Navy Base, Crisp & Bright)
+val DarkBgBase = Color(0xFF0F172A)          // Rich Slate-900 (far clearer and brighter than murky dark-green)
+val DarkSurfaceCard = Color(0xFF1E293B)     // Clean Slate-800 for high-contrast legible card containers
+val DarkSurfaceCardOpaque = Color(0xFF162032)
+val DarkBorder = Color(0xFF334155)          // Crisp Slate-700 separator
+val DarkBorderHighlight = Color(0xFF10B981) // Crisp vibrant emerald border
 
 // Vibrant Accents (Dark Mode)
 val EmeraldPrimary = Color(0xFF10B981)
-val EmeraldLight = Color(0xFF34D399)
+val EmeraldLight = Color(0xFF34D399)        // Bright mint/emerald for high readability
 val EmeraldDark = Color(0xFF059669)
 val EmeraldGlow = Color(0x3310B981)
 
