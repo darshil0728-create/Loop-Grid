@@ -315,6 +315,30 @@ fun DashboardSearchableListComponent(
                         )
                     }
                 }
+
+                Button(
+                    onClick = onRegisterNewResource,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.testTag("btn_list_leftover_material_header")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Recycling,
+                        contentDescription = null,
+                        tint = if (isDarkTheme) Slate950 else CrispWhite,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "+ List Leftover",
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = if (isDarkTheme) Slate950 else CrispWhite
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))

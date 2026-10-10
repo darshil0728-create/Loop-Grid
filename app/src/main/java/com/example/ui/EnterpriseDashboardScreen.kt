@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.filled.Recycling
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -105,6 +106,8 @@ import com.example.ui.components.DashboardLeftNavDrawer
 import com.example.ui.components.DashboardNavTab
 import com.example.ui.components.DashboardNotificationsSheet
 import com.example.ui.components.DashboardSearchableListComponent
+import com.example.ui.components.ListLeftoverMaterialForm
+import com.example.ui.components.LeftoverMaterialListing
 import com.example.ui.components.EnterpriseDrpSectionSheet
 import com.example.ui.components.FinancialPartnerCreditDesk
 import com.example.ui.components.ImpactOverviewRow
@@ -152,7 +155,8 @@ private fun DashboardIdentityCard(
     profile: EnterpriseProfile,
     isDarkTheme: Boolean,
     completionPercent: Int,
-    onRegisterFeedClick: () -> Unit
+    onRegisterFeedClick: () -> Unit,
+    onListLeftoverClick: () -> Unit = onRegisterFeedClick
 ) {
     Box(
         modifier = Modifier
@@ -270,24 +274,50 @@ private fun DashboardIdentityCard(
                     }
                 }
 
-                // Register Feed Action
-                Button(
-                    onClick = onRegisterFeedClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.testTag("btn_dashboard_register_feed")
+                // Register Feed & List Leftover Actions
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Register Feed",
-                        fontFamily = PlusJakartaSans,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = if (isDarkTheme) Slate950 else CrispWhite
-                    )
+                    OutlinedButton(
+                        onClick = onListLeftoverClick,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.testTag("btn_dashboard_list_leftover")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Recycling,
+                            contentDescription = null,
+                            tint = if (isDarkTheme) EmeraldLight else LightEmeraldDark,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "List Leftover",
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                        )
+                    }
+
+                    Button(
+                        onClick = onRegisterFeedClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.testTag("btn_dashboard_register_feed")
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Register Feed",
+                            fontFamily = PlusJakartaSans,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = if (isDarkTheme) Slate950 else CrispWhite
+                        )
+                    }
                 }
             }
         }
@@ -794,8 +824,9 @@ fun EnterpriseDashboardScreen(
     var pollutionStatusInput by remember { mutableStateOf(initialProfile.pollutionClearanceStatus) }
     var sustainabilityGoalsInput by remember { mutableStateOf(initialProfile.sustainabilityGoals) }
 
-    // Register feed dialog state
+    // Register feed & leftover material dialog state
     var showRegisterDialog by remember { mutableStateOf(false) }
+    var showListLeftoverDialog by remember { mutableStateOf(false) }
 
     // Notification System State
     var notificationsList by remember { mutableStateOf(getInitialDashboardNotifications()) }
@@ -1297,7 +1328,8 @@ fun EnterpriseDashboardScreen(
                         profile = profileState,
                         isDarkTheme = isDarkTheme,
                         completionPercent = completionPercent,
-                        onRegisterFeedClick = { showRegisterDialog = true }
+                        onRegisterFeedClick = { showRegisterDialog = true },
+                        onListLeftoverClick = { showListLeftoverDialog = true }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -1848,7 +1880,7 @@ fun EnterpriseDashboardScreen(
                             snackbarHostState.showSnackbar("Connected with ${enterprise.enterpriseName} (${enterprise.location})")
                         }
                     },
-                    onRegisterNewResource = { showRegisterDialog = true }
+                    onRegisterNewResource = { showListLeftoverDialog = true }
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
@@ -1858,7 +1890,7 @@ fun EnterpriseDashboardScreen(
                     passports = enterpriseDrpsList,
                     profile = profileState,
                     isDarkTheme = isDarkTheme,
-                    onRegisterNewFeed = { showRegisterDialog = true },
+                    onRegisterNewFeed = { showListLeftoverDialog = true },
                     onOpenDrpSection = { initialTab ->
                         drpSectionInitialTab = initialTab
                         showDrpSectionSheet = true
@@ -1868,6 +1900,55 @@ fun EnterpriseDashboardScreen(
                 Spacer(modifier = Modifier.height(40.dp))
             }
         }
+    }
+
+    // Form component that allows businesses to list leftover materials with fields for
+    // material type, quantity, location, availability, and input validation
+    if (showListLeftoverDialog) {
+        ListLeftoverMaterialForm(
+            isDarkTheme = isDarkTheme,
+            initialLocation = if (profileState.branches.isNotEmpty()) profileState.branches.first() else profileState.registeredOffice.ifBlank { "Pune MIDC Industrial Cluster" },
+            onDismiss = { showListLeftoverDialog = false },
+            onSubmitListing = { listing ->
+                showListLeftoverDialog = false
+                val locationTag = listing.location.filter { it.isLetter() }.take(3).uppercase().ifBlank { "MID" }
+                val drpCode = "DRP-$locationTag-2026-${(1000..9999).random()}"
+                val newPassport = DigitalResourcePassport(
+                    drpId = drpCode,
+                    materialName = if (listing.specificDescription.isNotBlank()) "${listing.specificDescription} (${listing.materialType.substringBefore(" (")})" else listing.materialType,
+                    materialCategory = listing.materialType.substringBefore(" ("),
+                    quantityValue = listing.quantityValue,
+                    quantityUnit = listing.quantityUnit,
+                    enterpriseName = profileState.enterpriseName.ifBlank { "Registered Enterprise" },
+                    originDistrict = listing.location,
+                    originState = "Maharashtra",
+                    purityGrade = listing.purityGrade.ifBlank { "Standard Industrial Grade" },
+                    status = DrpStatus.AVAILABLE,
+                    issuanceDate = "Today",
+                    notes = "Leftover listing [${listing.availability}]: ${listing.notes}".trim()
+                )
+                enterpriseDrpsList = listOf(newPassport) + enterpriseDrpsList
+                addNotification(
+                    title = "Leftover Material Listed: ${newPassport.materialName}",
+                    description = "Listed ${listing.quantityValue} ${listing.quantityUnit} at ${listing.location} (${listing.availability}). Digital Passport $drpCode issued.",
+                    category = NotificationCategory.DRP_ACTION,
+                    isUrgent = true,
+                    actionLabel = "View DRP Slip"
+                )
+                addNotification(
+                    title = "Matching Engine Active: ${newPassport.materialName}",
+                    description = "Circular matching engine is now connecting ${listing.quantityValue} ${listing.quantityUnit} with nearby processing facilities.",
+                    category = NotificationCategory.MATERIAL_MATCH,
+                    isUrgent = true,
+                    actionLabel = "View Offtakers"
+                )
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        "Leftover listed: ${listing.quantityValue} ${listing.quantityUnit} of ${newPassport.materialName} in ${listing.location} (${listing.availability})!"
+                    )
+                }
+            }
+        )
     }
 
     // Modal to register resource directly from dashboard
