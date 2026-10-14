@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -86,44 +87,46 @@ fun LoopGridHeader(
             // Text "Explore Demo Account" button
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(999.dp))
                     .clickable { onExploreDemoClick() }
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .padding(horizontal = 12.dp, vertical = 7.dp)
                     .testTag("nav_explore_demo_account"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Explore Demo Account",
+                    text = "Explore Demo",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
-                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 12.5.sp,
+                    color = if (isDarkTheme) Color(0xFFCBD5E1) else LightTextHeadline,
+                    letterSpacing = 0.2.sp
                 )
             }
 
             // Separate "Login" button
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(999.dp))
                     .border(
-                        width = 1.dp,
-                        color = if (isDarkTheme) Color(0x40334155) else LightBorderStrong,
-                        shape = RoundedCornerShape(8.dp)
+                        width = 0.75.dp,
+                        color = if (isDarkTheme) Color(0x33FFFFFF) else Color(0x26000000),
+                        shape = RoundedCornerShape(999.dp)
                     )
                     .background(
-                        if (isDarkTheme) Color(0x220F172A) else LightSurfaceCard
+                        if (isDarkTheme) Color(0x14FFFFFF) else LightSurfaceCard
                     )
                     .clickable { onLogInClick() }
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .padding(horizontal = 14.dp, vertical = 7.dp)
                     .testTag("nav_login_button"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Login",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
-                    color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.5.sp,
+                    color = if (isDarkTheme) CrispWhite else LightTextHeadline,
+                    letterSpacing = 0.2.sp
                 )
             }
 
@@ -131,38 +134,39 @@ fun LoopGridHeader(
             Box(
                 modifier = Modifier
                     .shadow(
-                        elevation = 6.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        ambientColor = if (isDarkTheme) Color(0x5510B981) else Color(0x35059669),
-                        spotColor = if (isDarkTheme) Color(0x7710B981) else Color(0x50059669)
+                        elevation = if (isDarkTheme) 6.dp else 2.dp,
+                        shape = RoundedCornerShape(999.dp),
+                        ambientColor = if (isDarkTheme) Color(0x4010B981) else Color(0x25059669),
+                        spotColor = if (isDarkTheme) Color(0x6010B981) else Color(0x35059669)
                     )
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(999.dp))
                     .background(if (isDarkTheme) EmeraldPrimary else LightEmerald)
                     .clickable { onSignUpClick() }
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .padding(horizontal = 15.dp, vertical = 7.dp)
                     .testTag("nav_signup_button"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Sign Up",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 13.sp,
-                    color = if (isDarkTheme) Slate950 else CrispWhite
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.5.sp,
+                    color = if (isDarkTheme) Slate950 else CrispWhite,
+                    letterSpacing = 0.2.sp
                 )
             }
 
-            // Dark/Light Theme Switcher: Prominent sun/moon icon toggle
+            // Dark/Light Theme Switcher: Prominent circular sun/moon icon toggle
             Box(
                 modifier = Modifier
-                    .size(38.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(34.dp)
+                    .clip(CircleShape)
                     .border(
-                        width = 1.dp,
-                        color = if (isDarkTheme) Slate700.copy(alpha = 0.6f) else LightBorder,
-                        shape = RoundedCornerShape(8.dp)
+                        width = 0.75.dp,
+                        color = if (isDarkTheme) Color(0x26FFFFFF) else Color(0x1F000000),
+                        shape = CircleShape
                     )
-                    .background(if (isDarkTheme) Color(0x400F172A) else LightSurfaceCard)
+                    .background(if (isDarkTheme) Color(0x14FFFFFF) else LightSurfaceCard)
                     .clickable { onToggleTheme() }
                     .testTag("theme_switcher_btn"),
                 contentAlignment = Alignment.Center
@@ -177,14 +181,14 @@ fun LoopGridHeader(
                             imageVector = Icons.Default.LightMode,
                             contentDescription = "Switch to Light Theme",
                             tint = Color(0xFFFBBF24), // Amber Sun
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Default.DarkMode,
                             contentDescription = "Switch to Dark Theme",
-                            tint = Color(0xFF7C3AED), // Violet Moon
-                            modifier = Modifier.size(18.dp)
+                            tint = Color(0xFF6366F1), // Violet Moon
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }

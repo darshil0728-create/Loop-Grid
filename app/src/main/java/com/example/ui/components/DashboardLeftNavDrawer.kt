@@ -415,10 +415,10 @@ fun DashboardLeftNavDrawer(
             )
 
             Text(
-                text = "Darshil Jain & Sarvesh Kulkarni",
+                text = "Designed & Developed by Darshil Jain",
                 fontFamily = PlusJakartaSans,
                 fontWeight = FontWeight.Medium,
-                fontSize = 9.sp,
+                fontSize = 9.5.sp,
                 color = if (isDarkTheme) Slate400 else Color(0xFF64748B)
             )
 

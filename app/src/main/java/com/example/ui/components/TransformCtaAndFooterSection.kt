@@ -50,6 +50,7 @@ import com.example.ui.theme.EmeraldPrimary
 import com.example.ui.theme.LightBorder
 import com.example.ui.theme.LightBorderStrong
 import com.example.ui.theme.LightEmerald
+import com.example.ui.theme.LightEmeraldDark
 import com.example.ui.theme.LightSurfaceCard
 import com.example.ui.theme.LightTextBody
 import com.example.ui.theme.LightTextHeadline
@@ -72,7 +73,7 @@ private const val LINKEDIN_URL = "https://www.linkedin.com/in/darshil-jain-59375
  * - Button 2: "EXPLORE WHAT WE DO"
  * - Footer:
  *   - Extreme left: "© LOOPGRID"
- *   - Centre: "DESIGNED AND DEVELOPED BY DARSHIL JAIN & SARVESH KULKARNI"
+ *   - Centre: "DESIGNED AND DEVELOPED BY DARSHIL JAIN"
  *   - Extreme right: "LinkedIn" and "GitHub" buttons
  */
 @Composable
@@ -188,15 +189,15 @@ fun TransformCtaAndFooterSection(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isDarkTheme) EmeraldPrimary else LightEmerald
                         ),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(999.dp),
                         modifier = Modifier
                             .shadow(
-                                elevation = 14.dp,
-                                shape = RoundedCornerShape(12.dp),
-                                ambientColor = if (isDarkTheme) Color(0x6610B981) else Color(0x40059669),
-                                spotColor = if (isDarkTheme) Color(0x8010B981) else Color(0x60059669)
+                                elevation = if (isDarkTheme) 10.dp else 4.dp,
+                                shape = RoundedCornerShape(999.dp),
+                                ambientColor = if (isDarkTheme) Color(0x4010B981) else Color(0x30059669),
+                                spotColor = if (isDarkTheme) Color(0x6010B981) else Color(0x40059669)
                             )
-                            .height(52.dp)
+                            .height(50.dp)
                             .testTag("cta_btn_register_feed")
                     ) {
                         Row(
@@ -208,16 +209,16 @@ fun TransformCtaAndFooterSection(
                                 text = "REGISTER A FEED",
                                 fontFamily = PlusJakartaSans,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
+                                fontSize = 13.5.sp,
                                 color = if (isDarkTheme) Slate950 else CrispWhite,
-                                letterSpacing = 0.5.sp
+                                letterSpacing = 0.4.sp
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = "Arrow Forward",
                                 tint = if (isDarkTheme) Slate950 else CrispWhite,
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(17.dp)
                             )
                         }
                     }
@@ -225,30 +226,24 @@ fun TransformCtaAndFooterSection(
                     // Button 2: EXPLORE WHAT WE DO
                     Box(
                         modifier = Modifier
-                            .shadow(
-                                elevation = if (isDarkTheme) 0.dp else 4.dp,
-                                shape = RoundedCornerShape(12.dp),
-                                ambientColor = Color(0x100F172A),
-                                spotColor = Color(0x150F172A)
-                            )
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(RoundedCornerShape(999.dp))
                             .border(
                                 width = 1.dp,
-                                color = if (isDarkTheme) Slate700 else LightBorderStrong,
-                                shape = RoundedCornerShape(12.dp)
+                                color = if (isDarkTheme) Color(0x33FFFFFF) else Color(0x26000000),
+                                shape = RoundedCornerShape(999.dp)
                             )
                             .background(
-                                if (isDarkTheme) Color(0x990F172A) else LightSurfaceCard
+                                if (isDarkTheme) Color(0x1AFFFFFF) else LightSurfaceCard
                             )
                             .clickable { onExploreWhatWeDoClick() }
-                            .padding(horizontal = 20.dp, vertical = 14.dp)
+                            .padding(horizontal = 22.dp, vertical = 14.dp)
                             .testTag("cta_btn_explore_what_we_do"),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "EXPLORE WHAT WE DO",
                             fontFamily = PlusJakartaSans,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold,
                             fontSize = 13.sp,
                             color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                             letterSpacing = 0.3.sp
@@ -257,11 +252,11 @@ fun TransformCtaAndFooterSection(
                 }
             }
 
-            // Horizontal Divider (separating CTA from Footer, matching reference image)
+            // Horizontal Divider (separating CTA from Footer, subtle hairline)
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = if (isDarkTheme) Color(0x2E334155) else Color(0xFFCBD5E1)
+                thickness = 0.75.dp,
+                color = if (isDarkTheme) Color(0x1FFFFFFF) else Color(0x14000000)
             )
 
             // Bottom Footer
@@ -280,19 +275,32 @@ fun TransformCtaAndFooterSection(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Extreme Left: © LOOPGRID
+                        // Extreme Left: © LoopGrid
                         FooterBranding(isDarkTheme)
 
-                        // Centre: DESIGNED AND DEVELOPED BY DARSHIL JAIN & SARVESH KULKARNI
-                        Text(
-                            text = "DESIGNED AND DEVELOPED BY DARSHIL JAIN & SARVESH KULKARNI",
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
-                            color = if (isDarkTheme) CrispWhite else LightTextHeadline,
-                            letterSpacing = 0.5.sp,
-                            textAlign = TextAlign.Center
-                        )
+                        // Centre: Designed & Developed by Darshil Jain
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.testTag("footer_designed_by")
+                        ) {
+                            Text(
+                                text = "Designed & Developed by ",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 12.sp,
+                                color = if (isDarkTheme) Color(0xFF94A3B8) else Color(0xFF64748B),
+                                letterSpacing = 0.2.sp
+                            )
+                            Text(
+                                text = "Darshil Jain",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp,
+                                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
+                                letterSpacing = 0.2.sp
+                            )
+                        }
 
                         // Extreme Right: LinkedIn and GitHub buttons
                         Row(
@@ -330,7 +338,7 @@ fun TransformCtaAndFooterSection(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Left: © LOOPGRID
+                            // Left: © LoopGrid
                             FooterBranding(isDarkTheme)
 
                             // Right: Social buttons
@@ -358,16 +366,29 @@ fun TransformCtaAndFooterSection(
                             }
                         }
 
-                        // Centre: DESIGNED AND DEVELOPED BY DARSHIL JAIN & SARVESH KULKARNI
-                        Text(
-                            text = "DESIGNED AND DEVELOPED BY DARSHIL JAIN & SARVESH KULKARNI",
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 10.sp,
-                            color = if (isDarkTheme) CrispWhite else LightTextHeadline,
-                            letterSpacing = 0.5.sp,
-                            textAlign = TextAlign.Center
-                        )
+                        // Centre: Designed & Developed by Darshil Jain
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.testTag("footer_designed_by_mobile")
+                        ) {
+                            Text(
+                                text = "Designed & Developed by ",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 11.sp,
+                                color = if (isDarkTheme) Color(0xFF94A3B8) else Color(0xFF64748B),
+                                letterSpacing = 0.2.sp
+                            )
+                            Text(
+                                text = "Darshil Jain",
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 11.sp,
+                                color = if (isDarkTheme) CrispWhite else LightTextHeadline,
+                                letterSpacing = 0.2.sp
+                            )
+                        }
                     }
                 }
             }
@@ -378,20 +399,28 @@ fun TransformCtaAndFooterSection(
 @Composable
 private fun FooterBranding(isDarkTheme: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = Icons.Default.Eco,
-            contentDescription = null,
-            tint = if (isDarkTheme) EmeraldLight else LightEmerald,
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(if (isDarkTheme) Color(0x1F10B981) else Color(0x14059669)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Eco,
+                contentDescription = null,
+                tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                modifier = Modifier.size(12.dp)
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "© 2026 LOOPGRID",
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight.Bold,
+            text = "© 2026 LoopGrid",
+            fontFamily = PlusJakartaSans,
+            fontWeight = FontWeight.SemiBold,
             fontSize = 12.sp,
-            color = if (isDarkTheme) CrispWhite else LightTextHeadline,
-            letterSpacing = 0.5.sp
+            color = if (isDarkTheme) Color(0xFFCBD5E1) else LightTextHeadline,
+            letterSpacing = 0.2.sp
         )
     }
 }
@@ -407,33 +436,36 @@ private fun SocialButton(
 ) {
     val bgModifier = if (isLinkedIn) {
         Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDarkTheme) Color(0xFF063326) else Color(0xFFE6F4EA))
-            .border(1.dp, if (isDarkTheme) Color(0x6610B981) else Color(0x99059669), RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(999.dp))
+            .background(if (isDarkTheme) Color(0x1A10B981) else Color(0x14059669))
+            .border(0.75.dp, if (isDarkTheme) Color(0x4D10B981) else Color(0x33059669), RoundedCornerShape(999.dp))
     } else {
         Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (isDarkTheme) Color(0xFF161B22) else Color(0xFFF1F5F9))
-            .border(1.dp, if (isDarkTheme) Color(0x33475569) else Color(0xFFCBD5E1), RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(999.dp))
+            .background(if (isDarkTheme) Color(0x1AFFFFFF) else Color(0x0A000000))
+            .border(0.75.dp, if (isDarkTheme) Color(0x26FFFFFF) else Color(0x1A000000), RoundedCornerShape(999.dp))
     }
 
     Box(
         modifier = bgModifier
             .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 7.dp)
+            .padding(horizontal = 14.dp, vertical = 7.dp)
             .testTag(testTag),
         contentAlignment = Alignment.Center
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = label,
                 tint = if (isLinkedIn) {
-                    if (isDarkTheme) EmeraldLight else LightEmerald
+                    if (isDarkTheme) EmeraldLight else LightEmeraldDark
                 } else {
                     if (isDarkTheme) CrispWhite else LightTextHeadline
                 },
-                modifier = Modifier.size(15.dp)
+                modifier = Modifier.size(13.dp)
             )
 
             Spacer(modifier = Modifier.width(6.dp))
@@ -441,13 +473,14 @@ private fun SocialButton(
             Text(
                 text = label,
                 fontFamily = PlusJakartaSans,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                fontSize = 11.5.sp,
                 color = if (isLinkedIn) {
-                    if (isDarkTheme) EmeraldLight else LightEmerald
+                    if (isDarkTheme) EmeraldLight else LightEmeraldDark
                 } else {
                     if (isDarkTheme) CrispWhite else LightTextHeadline
-                }
+                },
+                letterSpacing = 0.2.sp
             )
         }
     }

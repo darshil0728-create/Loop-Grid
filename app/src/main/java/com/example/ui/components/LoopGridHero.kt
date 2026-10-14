@@ -246,15 +246,15 @@ fun LoopGridHero(
             Box(
                 modifier = Modifier
                     .shadow(
-                        elevation = 12.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        ambientColor = if (isDarkTheme) Color(0x4D10B981) else Color(0x33059669),
-                        spotColor = if (isDarkTheme) Color(0x6610B981) else Color(0x40059669)
+                        elevation = if (isDarkTheme) 10.dp else 4.dp,
+                        shape = RoundedCornerShape(999.dp),
+                        ambientColor = if (isDarkTheme) Color(0x4010B981) else Color(0x25059669),
+                        spotColor = if (isDarkTheme) Color(0x6010B981) else Color(0x35059669)
                     )
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(999.dp))
                     .background(if (isDarkTheme) EmeraldPrimary else LightEmerald)
                     .clickable { onRegisterFeedClick() }
-                    .padding(horizontal = 22.dp, vertical = 14.dp)
+                    .padding(horizontal = 24.dp, vertical = 14.dp)
                     .testTag("btn_register_feed"),
                 contentAlignment = Alignment.Center
             ) {
@@ -266,9 +266,9 @@ fun LoopGridHero(
                         text = "REGISTER A FEED",
                         fontFamily = PlusJakartaSans,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         color = if (isDarkTheme) Slate950 else CrispWhite,
-                        letterSpacing = 0.5.sp
+                        letterSpacing = 0.4.sp
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -277,7 +277,7 @@ fun LoopGridHero(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "Arrow Forward",
                         tint = if (isDarkTheme) Slate950 else CrispWhite,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(17.dp)
                     )
                 }
             }
@@ -287,31 +287,25 @@ fun LoopGridHero(
             // Button 2: EXPLORE WHAT WE DO
             Box(
                 modifier = Modifier
-                    .shadow(
-                        elevation = if (isDarkTheme) 0.dp else 4.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        ambientColor = Color(0x100F172A),
-                        spotColor = Color(0x150F172A)
-                    )
-                    .clip(RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(999.dp))
                     .border(
                         width = 1.dp,
-                        color = if (isDarkTheme) Slate700 else LightBorderStrong,
-                        shape = RoundedCornerShape(12.dp)
+                        color = if (isDarkTheme) Color(0x33FFFFFF) else Color(0x26000000),
+                        shape = RoundedCornerShape(999.dp)
                     )
                     .background(
-                        if (isDarkTheme) Color(0x990F172A) else LightSurfaceCard
+                        if (isDarkTheme) Color(0x1AFFFFFF) else LightSurfaceCard
                     )
                     .clickable { onExploreWhatWeDoClick() }
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
+                    .padding(horizontal = 22.dp, vertical = 14.dp)
                     .testTag("btn_explore_what_we_do"),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "EXPLORE WHAT WE DO",
                     fontFamily = PlusJakartaSans,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.5.sp,
                     color = if (isDarkTheme) CrispWhite else LightTextHeadline,
                     letterSpacing = 0.3.sp
                 )
