@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MonitorHeart
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
@@ -52,6 +53,7 @@ import androidx.compose.material.icons.filled.Recycling
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.TrackChanges
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -788,6 +790,162 @@ private fun DashboardLiveAlertBanner(
         }
     }
 }
+/**
+ * Clean separated pages for the Enterprise Dashboard to avoid information overload:
+ * 1. OPERATIONS: Core daily usage (leftover listing, real-time matching, active passports)
+ * 2. METRICS: Dedicated page for KPIs, circular offtake rate, custody pipeline, recoveries
+ * 3. BUSINESS_INFO: Dedicated page for enterprise legal credentials, registered office, branches & resources
+ * 4. MISSIONS: Dedicated page for nearby collection missions & transit actions
+ */
+enum class DashboardViewPage(
+    val title: String,
+    val icon: ImageVector,
+    val badgeLabel: String? = null,
+    val testTag: String
+) {
+    OPERATIONS("Operations", Icons.Default.Inventory2, "Core", "tab_page_operations"),
+    METRICS("Metrics & Impact", Icons.Default.MonitorHeart, "KPIs", "tab_page_metrics"),
+    BUSINESS_INFO("Enterprise Info", Icons.Default.Badge, null, "tab_page_business_info"),
+    MISSIONS("Missions", Icons.Default.TrackChanges, null, "tab_page_missions")
+}
+
+@Composable
+private fun DashboardPageSegmentedBar(
+    selectedPage: DashboardViewPage,
+    onPageSelected: (DashboardViewPage) -> Unit,
+    isDarkTheme: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .testTag("dashboard_page_segmented_bar"),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DashboardViewPage.entries.forEach { page ->
+            val isSelected = selectedPage == page
+            val bg = if (isSelected) {
+                if (isDarkTheme) EmeraldPrimary else LightEmerald
+            } else {
+                if (isDarkTheme) Color(0x1AFFFFFF) else Color(0x0A000000)
+            }
+            val borderCol = if (isSelected) {
+                Color.Transparent
+            } else {
+                if (isDarkTheme) Color(0x26FFFFFF) else Color(0x1A000000)
+            }
+            val textCol = if (isSelected) {
+                if (isDarkTheme) Slate950 else CrispWhite
+            } else {
+                if (isDarkTheme) Color(0xFFCBD5E1) else LightTextHeadline
+            }
+            val iconCol = if (isSelected) {
+                if (isDarkTheme) Slate950 else CrispWhite
+            } else {
+                if (isDarkTheme) EmeraldLight else LightEmeraldDark
+            }
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(bg)
+                    .border(0.75.dp, borderCol, RoundedCornerShape(999.dp))
+                    .clickable { onPageSelected(page) }
+                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .testTag(page.testTag),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = page.icon,
+                        contentDescription = page.title,
+                        tint = iconCol,
+                        modifier = Modifier.size(15.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = page.title,
+                        fontFamily = PlusJakartaSans,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        fontSize = 12.sp,
+                        color = textCol,
+                        letterSpacing = 0.2.sp
+                    )
+
+                    if (page.badgeLabel != null) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(
+                                    if (isSelected) {
+                                        if (isDarkTheme) Color(0x33000000) else Color(0x33FFFFFF)
+                                    } else {
+                                        if (isDarkTheme) Color(0x3310B981) else Color(0x1F059669)
+                                    }
+                                )
+                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = page.badgeLabel,
+                                fontFamily = PlusJakartaSans,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 9.sp,
+                                color = if (isSelected) textCol else (if (isDarkTheme) EmeraldLight else LightEmeraldDark)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DashboardSectionTitleHeader(
+    tag: String,
+    title: String,
+    subtitle: String,
+    isDarkTheme: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .widthIn(max = 840.dp)
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Text(
+            text = tag,
+            fontFamily = PlusJakartaSans,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 11.sp,
+            letterSpacing = 1.2.sp,
+            color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            fontFamily = PlusJakartaSans,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 24.sp,
+            color = if (isDarkTheme) CrispWhite else LightTextHeadline
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = subtitle,
+            fontFamily = PlusJakartaSans,
+            fontSize = 13.sp,
+            lineHeight = 18.sp,
+            color = if (isDarkTheme) Color(0xFF94A3B8) else Color(0xFF64748B)
+        )
+    }
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -806,6 +964,7 @@ fun EnterpriseDashboardScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     var currentNavTab by remember { mutableStateOf(DashboardNavTab.HOME) }
+    var currentViewPage by remember { mutableStateOf(DashboardViewPage.OPERATIONS) }
 
     // Editable form state initialized from repository profile
     var profileState by remember { mutableStateOf(initialProfile) }
@@ -1901,6 +2060,7 @@ fun EnterpriseDashboardScreen(
             }
         }
     }
+}
 
     // Form component that allows businesses to list leftover materials with fields for
     // material type, quantity, location, availability, and input validation
@@ -2095,7 +2255,4 @@ fun EnterpriseDashboardScreen(
             }
         )
     }
-}
-
-
 }
