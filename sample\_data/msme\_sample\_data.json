@@ -1,0 +1,43 @@
+{
+  "cluster": "Pune-Pimpri-Chinchwad",
+  "unused_resource_listings": [
+    {
+      "listing_id": "LG-MSME-101",
+      "msme_name": "Sahyadri Precision",
+      "material_category": "Metal",
+      "material_spec": "Aluminum 6061",
+      "quantity_kg": 450,
+      "location": "Bhosari MIDC, Pune",
+      "status": "Pooled in Batch #B-201"
+    },
+    {
+      "listing_id": "LG-MSME-102",
+      "msme_name": "Deccan FabTech",
+      "material_category": "Metal",
+      "material_spec": "Aluminum 6061",
+      "quantity_kg": 550,
+      "location": "Chakan MIDC, Pune",
+      "status": "Pooled in Batch #B-201"
+    },
+    {
+      "listing_id": "LG-MSME-103",
+      "msme_name": "Kalyani PolyPacks",
+      "material_category": "Polymer",
+      "material_spec": "Clean HDPE",
+      "quantity_kg": 800,
+      "location": "Talegaon MIDC, Pune",
+      "status": "Pooled in Batch #B-202"
+    }
+  ],
+  "enterprise_matches": [
+    {
+      "batch_id": "B-201",
+      "pooled_quantity_kg": 1000,
+      "buyer_enterprise": "Western Castings Ltd.",
+      "cost_savings_percent": 18.5,
+      "co2e_saved_kg": 8200,
+      "working_capital_unlocked_inr": "1.2 Lakhs"
+    }
+  ]
+}
+
