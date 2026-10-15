@@ -126,6 +126,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onBackToHome = {
                                 currentScreen = AppScreen.HOME
+                            },
+                            onToggleTheme = {
+                                isDarkTheme = !isDarkTheme
                             }
                         )
                     }

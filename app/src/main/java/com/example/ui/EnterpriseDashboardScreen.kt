@@ -33,8 +33,10 @@ import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Factory
 import androidx.compose.material.icons.filled.Handshake
@@ -955,6 +957,7 @@ fun EnterpriseDashboardScreen(
     onSaveProfile: (profile: EnterpriseProfile, isDraft: Boolean) -> Unit,
     onLogout: () -> Unit,
     onBackToHome: () -> Unit,
+    onToggleTheme: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     BackHandler { onBackToHome() }
@@ -1039,9 +1042,9 @@ fun EnterpriseDashboardScreen(
 
     val bgBrush = Brush.verticalGradient(
         colors = if (isDarkTheme) {
-            listOf(Color(0xFF131F1A), Color(0xFF182822), Color(0xFF0F1A15))
+            listOf(Color(0xFF16251F), Color(0xFF1C2E26), Color(0xFF13201A))
         } else {
-            listOf(Color(0xFFF7FAF7), Color(0xFFF1F7F2), Color(0xFFEAF4EC))
+            listOf(Color(0xFFF6FAF7), Color(0xFFF0F7F2), Color(0xFFE8F3EB))
         }
     )
 
@@ -1133,7 +1136,7 @@ fun EnterpriseDashboardScreen(
                 profile = profileState,
                 unreadNotificationCount = notificationsList.count { !it.isRead },
                 isDarkTheme = isDarkTheme,
-                onToggleTheme = { /* Toggle theme handled */ },
+                onToggleTheme = onToggleTheme,
                 onCloseDrawer = { coroutineScope.launch { drawerState.close() } }
             )
         }
@@ -1239,11 +1242,22 @@ fun EnterpriseDashboardScreen(
                             }
                         }
 
-                        // Top Bar Action Buttons: Notifications Bell & Logout
+                        // Top Bar Action Buttons: Theme Toggle, Notifications Bell & Logout
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            IconButton(
+                                onClick = onToggleTheme,
+                                modifier = Modifier.testTag("btn_dashboard_theme_toggle")
+                            ) {
+                                Icon(
+                                    imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                    contentDescription = "Toggle Light / Dark Theme",
+                                    tint = if (isDarkTheme) Color(0xFFFBBF24) else Color(0xFF475569)
+                                )
+                            }
+
                             // Notifications button with badge
                             Box(contentAlignment = Alignment.TopEnd) {
                                 IconButton(
@@ -1362,49 +1376,49 @@ fun EnterpriseDashboardScreen(
                         isDarkTheme = isDarkTheme
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    // Live Notification & Alerts Banner (Material Matches, DRP Checkpoints, Updates)
-                    DashboardLiveAlertBanner(
-                        latestAlert = notificationsList.firstOrNull { !it.isRead && (it.isUrgent || it.category == NotificationCategory.MATERIAL_MATCH || it.category == NotificationCategory.DRP_ACTION) }
-                            ?: notificationsList.firstOrNull { !it.isRead },
-                        totalUnreadCount = notificationsList.count { !it.isRead },
-                        isDarkTheme = isDarkTheme,
-                        onOpenAllNotifications = { showNotificationsSheet = true },
-                        onActionClick = { notif ->
-                            notificationsList = notificationsList.map {
-                                if (it.id == notif.id) it.copy(isRead = true) else it
-                            }
-                            coroutineScope.launch {
-                                when (notif.category) {
-                                    NotificationCategory.MATERIAL_MATCH -> {
-                                        snackbarHostState.showSnackbar("Opening match offer: ${notif.title}")
-                                    }
-                                    NotificationCategory.DRP_ACTION -> {
-                                        snackbarHostState.showSnackbar("Opening Passport action: ${notif.title}")
-                                    }
-                                    NotificationCategory.PROFILE_RESOURCE -> {
-                                        currentViewPage = DashboardViewPage.BUSINESS_INFO
-                                        isEditingProfile = true
-                                        snackbarHostState.showSnackbar("Opening details: ${notif.title}")
-                                    }
-                                    else -> {
-                                        snackbarHostState.showSnackbar(notif.title)
-                                    }
-                                }
-                            }
-                        },
-                        onDismiss = { notifId ->
-                            notificationsList = notificationsList.map {
-                                if (it.id == notifId) it.copy(isRead = true) else it
-                            }
-                        }
-                    )
-
                     Spacer(modifier = Modifier.height(24.dp))
 
                     when (currentViewPage) {
                         DashboardViewPage.OPERATIONS -> {
+                            // Live Notification & Alerts Banner (Material Matches, DRP Checkpoints, Updates)
+                            DashboardLiveAlertBanner(
+                                latestAlert = notificationsList.firstOrNull { !it.isRead && (it.isUrgent || it.category == NotificationCategory.MATERIAL_MATCH || it.category == NotificationCategory.DRP_ACTION) }
+                                    ?: notificationsList.firstOrNull { !it.isRead },
+                                totalUnreadCount = notificationsList.count { !it.isRead },
+                                isDarkTheme = isDarkTheme,
+                                onOpenAllNotifications = { showNotificationsSheet = true },
+                                onActionClick = { notif ->
+                                    notificationsList = notificationsList.map {
+                                        if (it.id == notif.id) it.copy(isRead = true) else it
+                                    }
+                                    coroutineScope.launch {
+                                        when (notif.category) {
+                                            NotificationCategory.MATERIAL_MATCH -> {
+                                                snackbarHostState.showSnackbar("Opening match offer: ${notif.title}")
+                                            }
+                                            NotificationCategory.DRP_ACTION -> {
+                                                snackbarHostState.showSnackbar("Opening Passport action: ${notif.title}")
+                                            }
+                                            NotificationCategory.PROFILE_RESOURCE -> {
+                                                currentViewPage = DashboardViewPage.BUSINESS_INFO
+                                                isEditingProfile = true
+                                                snackbarHostState.showSnackbar("Opening details: ${notif.title}")
+                                            }
+                                            else -> {
+                                                snackbarHostState.showSnackbar(notif.title)
+                                            }
+                                        }
+                                    }
+                                },
+                                onDismiss = { notifId ->
+                                    notificationsList = notificationsList.map {
+                                        if (it.id == notifId) it.copy(isRead = true) else it
+                                    }
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(20.dp))
+
                             // 1. ENTERPRISE IDENTITY & QUICK ACTIONS CARD
                             DashboardIdentityCard(
                                 profile = profileState,

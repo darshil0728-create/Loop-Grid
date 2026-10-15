@@ -3,10 +3,10 @@ package com.example.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // LoopGrid Modern High-Legibility Palette (Clean Lighter Base with Signature Green Identity)
-val DarkBgBase = Color(0xFF131F1A)          // Softer, lighter slate-emerald base
-val DarkSurfaceCard = Color(0xFF1D2E27)     // Elevated lighter surface with subtle emerald tint
-val DarkSurfaceCardOpaque = Color(0xFF182620)
-val DarkBorder = Color(0xFF2E453A)          // Soft sage-slate separator
+val DarkBgBase = Color(0xFF16251F)          // Softer, lighter slate-emerald base
+val DarkSurfaceCard = Color(0xFF1F352C)     // Elevated lighter surface with subtle emerald tint
+val DarkSurfaceCardOpaque = Color(0xFF1B2D26)
+val DarkBorder = Color(0xFF2E483D)          // Soft sage-slate separator
 val DarkBorderHighlight = Color(0xFF10B981) // Crisp vibrant emerald border
 
 // Vibrant Accents (Dark Mode)
@@ -33,10 +33,10 @@ val Slate100 = Color(0xFFF1F5F9)
 val CrispWhite = Color(0xFFFFFFFF)
 
 // Enhanced Light Mode Palette (Luminous, Apple-Style Clean with Signature Brand Green Touch)
-val LightBgBase = Color(0xFFF7FAF7)        // Luminous light canvas with subtle fresh mint-emerald tint
+val LightBgBase = Color(0xFFF6FAF7)        // Luminous light canvas with subtle fresh mint-emerald tint
 val LightSurfaceCard = Color(0xFFFFFFFF)   // Crisp pure white cards
-val LightBorder = Color(0xFFE2EBE3)        // Delicate soft border with whisper of green
-val LightBorderStrong = Color(0xFFCCE0CE)  // Soft sage-300 border
+val LightBorder = Color(0xFFE2EBE4)        // Delicate soft border with whisper of green
+val LightBorderStrong = Color(0xFFCCE2D0)  // Soft sage-300 border
 val LightEmeraldSubtle = Color(0xFFECFDF5) // Very light mint for pills and badges
 val LightTextHeadline = Color(0xFF0F172A)  // Slate-900 high contrast readable text
 val LightTextBody = Color(0xFF334155)      // Slate-700
