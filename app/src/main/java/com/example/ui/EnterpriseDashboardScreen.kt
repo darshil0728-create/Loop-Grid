@@ -829,12 +829,12 @@ private fun DashboardPageSegmentedBar(
             val bg = if (isSelected) {
                 if (isDarkTheme) EmeraldPrimary else LightEmerald
             } else {
-                if (isDarkTheme) Color(0x1AFFFFFF) else Color(0x0A000000)
+                if (isDarkTheme) Color(0x1F334155) else LightSurfaceCard
             }
             val borderCol = if (isSelected) {
                 Color.Transparent
             } else {
-                if (isDarkTheme) Color(0x26FFFFFF) else Color(0x1A000000)
+                if (isDarkTheme) Color(0x33475569) else Color(0xFFE2EBE3)
             }
             val textCol = if (isSelected) {
                 if (isDarkTheme) Slate950 else CrispWhite
@@ -853,7 +853,7 @@ private fun DashboardPageSegmentedBar(
                     .background(bg)
                     .border(0.75.dp, borderCol, RoundedCornerShape(999.dp))
                     .clickable { onPageSelected(page) }
-                    .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .padding(horizontal = 16.dp, vertical = 11.dp)
                     .testTag(page.testTag),
                 contentAlignment = Alignment.Center
             ) {
@@ -1039,9 +1039,9 @@ fun EnterpriseDashboardScreen(
 
     val bgBrush = Brush.verticalGradient(
         colors = if (isDarkTheme) {
-            listOf(Color(0xFF0F172A), Color(0xFF131D31), Color(0xFF0B1324))
+            listOf(Color(0xFF131F1A), Color(0xFF182822), Color(0xFF0F1A15))
         } else {
-            listOf(Color(0xFFF8FAFC), Color(0xFFF1F5F9), Color(0xFFF0FDF4))
+            listOf(Color(0xFFF7FAF7), Color(0xFFF1F7F2), Color(0xFFEAF4EC))
         }
     )
 
@@ -1055,6 +1055,7 @@ fun EnterpriseDashboardScreen(
                     coroutineScope.launch { drawerState.close() }
                     when (tab) {
                         DashboardNavTab.PROFILE -> {
+                            currentViewPage = DashboardViewPage.BUSINESS_INFO
                             isEditingProfile = true
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Opening Enterprise Profile: edit details, branches & resources anytime.")
@@ -1070,32 +1071,39 @@ fun EnterpriseDashboardScreen(
                             showGlobalSearchSheet = true
                         }
                         DashboardNavTab.CURRENT_DRP -> {
+                            currentViewPage = DashboardViewPage.OPERATIONS
                             drpSectionInitialTab = 0
                             showDrpSectionSheet = true
                         }
                         DashboardNavTab.DRP_HISTORY -> {
+                            currentViewPage = DashboardViewPage.OPERATIONS
                             drpSectionInitialTab = 1
                             showDrpSectionSheet = true
                         }
                         DashboardNavTab.REPORT -> {
+                            currentViewPage = DashboardViewPage.OPERATIONS
                             showRegisterDialog = true
                         }
                         DashboardNavTab.EXPLORE -> {
+                            currentViewPage = DashboardViewPage.OPERATIONS
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Scanning active circular offtakers and MSME buyer clusters.")
                             }
                         }
                         DashboardNavTab.MISSIONS -> {
+                            currentViewPage = DashboardViewPage.MISSIONS
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Viewing nearby cleanup and transit missions.")
                             }
                         }
                         DashboardNavTab.MONITORING -> {
+                            currentViewPage = DashboardViewPage.METRICS
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("SPCB CTO & ESG compliance tracking healthy.")
                             }
                         }
                         DashboardNavTab.LEADERBOARD -> {
+                            currentViewPage = DashboardViewPage.METRICS
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar("Cluster Leaderboard: Rank #4 in Maharashtra industrial cluster.")
                             }
@@ -1106,6 +1114,7 @@ fun EnterpriseDashboardScreen(
                             }
                         }
                         DashboardNavTab.RECOVERY -> {
+                            currentViewPage = DashboardViewPage.METRICS
                             if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
                                 coroutineScope.launch {
                                     snackbarHostState.showSnackbar("Working Capital Credit & Escrow Settlement Desk.")
@@ -1116,7 +1125,9 @@ fun EnterpriseDashboardScreen(
                                 }
                             }
                         }
-                        DashboardNavTab.HOME -> { /* Main Command Center */ }
+                        DashboardNavTab.HOME -> {
+                            currentViewPage = DashboardViewPage.OPERATIONS
+                        }
                     }
                 },
                 profile = profileState,
@@ -1342,6 +1353,17 @@ fun EnterpriseDashboardScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Apple-style View Page Segmented Bar (Operations | Metrics & Impact | Enterprise Info | Missions)
+                    DashboardPageSegmentedBar(
+                        selectedPage = currentViewPage,
+                        onPageSelected = { page -> currentViewPage = page },
+                        isDarkTheme = isDarkTheme
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
                     // Live Notification & Alerts Banner (Material Matches, DRP Checkpoints, Updates)
                     DashboardLiveAlertBanner(
                         latestAlert = notificationsList.firstOrNull { !it.isRead && (it.isUrgent || it.category == NotificationCategory.MATERIAL_MATCH || it.category == NotificationCategory.DRP_ACTION) }
@@ -1362,6 +1384,7 @@ fun EnterpriseDashboardScreen(
                                         snackbarHostState.showSnackbar("Opening Passport action: ${notif.title}")
                                     }
                                     NotificationCategory.PROFILE_RESOURCE -> {
+                                        currentViewPage = DashboardViewPage.BUSINESS_INFO
                                         isEditingProfile = true
                                         snackbarHostState.showSnackbar("Opening details: ${notif.title}")
                                     }
@@ -1378,120 +1401,278 @@ fun EnterpriseDashboardScreen(
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // HERO COMMAND CENTER SECTION (From Reference Image)
-                    CommandCenterHeroCard(
-                        profile = profileState,
-                        isDarkTheme = isDarkTheme,
-                        onPrimaryActionClick = {
-                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Opening MSME working capital credit facility.")
-                                }
-                            } else {
-                                showRegisterDialog = true
-                            }
-                        },
-                        onSecondaryActionClick = {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Scanning cluster hotspots and active demand.")
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // IMPACT OVERVIEW ROW (4 KPI Cards from Reference Image)
-                    ImpactOverviewRow(
-                        role = profileState.role,
-                        isDarkTheme = isDarkTheme
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // FIELD SURVEILLANCE PIPELINE (5 Stages from Reference Image)
-                    SurveillancePipelineHealth(
-                        isDarkTheme = isDarkTheme
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    // YOUR NEXT BEST ACTION CARD (From Reference Image)
-                    NextBestActionCard(
-                        role = profileState.role,
-                        isDarkTheme = isDarkTheme,
-                        onActionClick = {
-                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
-                                addNotification(
-                                    title = "Working Capital Line Disbursed",
-                                    description = "Disbursed ₹3,50,000 credit line to Shree Balaji Works. Collateral locked in escrow DRP.",
-                                    category = NotificationCategory.PROFILE_RESOURCE,
-                                    isUrgent = false,
-                                    actionLabel = "View Escrow Slip"
-                                )
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Approved & disbursed ₹3,50,000 working capital line.")
-                                }
-                            } else {
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Proceeding with next circular action.")
-                                }
-                            }
-                        }
-                    )
-
-                    // SPECIALIZED FINANCIAL PARTNER MODULE (when Financial Partner is selected)
-                    if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
-                        Spacer(modifier = Modifier.height(20.dp))
-                        FinancialPartnerCreditDesk(
-                            isDarkTheme = isDarkTheme,
-                            onApproveCredit = { amount, enterprise ->
-                                addNotification(
-                                    title = "Working Capital Credit Line Activated",
-                                    description = "Disbursed $amount credit line to $enterprise. 30-day term, 1.2% monthly rate, 100% escrow DRP collateral.",
-                                    category = NotificationCategory.MATERIAL_MATCH,
-                                    isUrgent = false,
-                                    actionLabel = "View Escrow Vault"
-                                )
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar("Credit line $amount successfully disbursed to $enterprise!")
-                                }
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(22.dp))
-
-                    // ACTION NEEDED NEARBY SECTION (From Reference Image)
-                    ActionNeededNearbySection(
-                        isDarkTheme = isDarkTheme,
-                        onViewAllClick = {
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar("Opening all nearby circular recovery missions.")
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // RECENT RECOVERIES (Before / After from Reference Image)
-                    RecentRecoveriesCard(
-                        isDarkTheme = isDarkTheme
-                    )
-
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // ENTERPRISE IDENTITY OVERVIEW CARD
-                    DashboardIdentityCard(
-                        profile = profileState,
-                        isDarkTheme = isDarkTheme,
-                        completionPercent = completionPercent,
-                        onRegisterFeedClick = { showRegisterDialog = true },
-                        onListLeftoverClick = { showListLeftoverDialog = true }
-                    )
+                    when (currentViewPage) {
+                        DashboardViewPage.OPERATIONS -> {
+                            // 1. ENTERPRISE IDENTITY & QUICK ACTIONS CARD
+                            DashboardIdentityCard(
+                                profile = profileState,
+                                isDarkTheme = isDarkTheme,
+                                completionPercent = completionPercent,
+                                onRegisterFeedClick = { showRegisterDialog = true },
+                                onListLeftoverClick = { showListLeftoverDialog = true }
+                            )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // 2. Real-time Searchable List for Resources & Connected Enterprises
+                            DashboardSearchableListComponent(
+                                passports = enterpriseDrpsList,
+                                profile = profileState,
+                                isDarkTheme = isDarkTheme,
+                                onSelectDrp = { drp ->
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Opening Digital Passport ${drp.drpId} (${drp.materialName})")
+                                    }
+                                    drpSectionInitialTab = if (drp.status.isOutdated) 1 else 0
+                                    showDrpSectionSheet = true
+                                },
+                                onConnectEnterprise = { enterprise ->
+                                    addNotification(
+                                        title = "Connection Request Sent: ${enterprise.enterpriseName}",
+                                        description = "Circular connection request dispatched to ${enterprise.enterpriseName} in ${enterprise.location}.",
+                                        category = NotificationCategory.MATERIAL_MATCH,
+                                        isUrgent = false,
+                                        actionLabel = "View Partner Slip"
+                                    )
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Connected with ${enterprise.enterpriseName} (${enterprise.location})")
+                                    }
+                                },
+                                onRegisterNewResource = { showListLeftoverDialog = true }
+                            )
+
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // 3. Active Feeds & Digital Resource Passports Section
+                            DashboardFeedsSummarySection(
+                                passports = enterpriseDrpsList,
+                                profile = profileState,
+                                isDarkTheme = isDarkTheme,
+                                onRegisterNewFeed = { showListLeftoverDialog = true },
+                                onOpenDrpSection = { initialTab ->
+                                    drpSectionInitialTab = initialTab
+                                    showDrpSectionSheet = true
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            // 4. Clean Apple-style Quick Navigators with generous white space
+                            Row(
+                                modifier = Modifier
+                                    .widthIn(max = 840.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                            ) {
+                                // Navigator to Metrics
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(18.dp))
+                                        .background(if (isDarkTheme) Color(0x1F10B981) else Color(0x12059669))
+                                        .border(1.dp, if (isDarkTheme) Color(0x3310B981) else Color(0x26059669), RoundedCornerShape(18.dp))
+                                        .clickable { currentViewPage = DashboardViewPage.METRICS }
+                                        .padding(18.dp)
+                                        .testTag("nav_card_to_metrics")
+                                ) {
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                imageVector = Icons.Default.MonitorHeart,
+                                                contentDescription = null,
+                                                tint = if (isDarkTheme) EmeraldLight else LightEmerald,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = "METRICS & KPIS",
+                                                fontFamily = PlusJakartaSans,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 11.sp,
+                                                letterSpacing = 0.8.sp,
+                                                color = if (isDarkTheme) EmeraldLight else LightEmeraldDark
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = "View Circular Metrics →",
+                                            fontFamily = PlusJakartaSans,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "4 verified KPIs, custody pipeline & transformation stories.",
+                                            fontFamily = PlusJakartaSans,
+                                            fontSize = 12.sp,
+                                            color = if (isDarkTheme) Color(0xFF94A3B8) else Color(0xFF64748B)
+                                        )
+                                    }
+                                }
+
+                                // Navigator to Profile
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(18.dp))
+                                        .background(if (isDarkTheme) Color(0x1A64748B) else LightSurfaceCard)
+                                        .border(1.dp, if (isDarkTheme) Color(0x2E64748B) else Color(0xFFE2EBE3), RoundedCornerShape(18.dp))
+                                        .clickable { currentViewPage = DashboardViewPage.BUSINESS_INFO }
+                                        .padding(18.dp)
+                                        .testTag("nav_card_to_profile")
+                                ) {
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                imageVector = Icons.Default.Badge,
+                                                contentDescription = null,
+                                                tint = if (isDarkTheme) CrispWhite else LightTextHeadline,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = "BUSINESS INFO",
+                                                fontFamily = PlusJakartaSans,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontSize = 11.sp,
+                                                letterSpacing = 0.8.sp,
+                                                color = if (isDarkTheme) Color(0xFFCBD5E1) else LightTextHeadline
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                            text = "Manage Enterprise Info →",
+                                            fontFamily = PlusJakartaSans,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp,
+                                            color = if (isDarkTheme) CrispWhite else LightTextHeadline
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "GSTIN, Udyam, factory branches & resources ($completionPercent% complete).",
+                                            fontFamily = PlusJakartaSans,
+                                            fontSize = 12.sp,
+                                            color = if (isDarkTheme) Color(0xFF94A3B8) else Color(0xFF64748B)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        DashboardViewPage.METRICS -> {
+                            // Dedicated Page for Performance and Metrics!
+                            DashboardSectionTitleHeader(
+                                tag = "CIRCULAR TELEMETRY & KPIS",
+                                title = "Metrics & Impact Analytics",
+                                subtitle = "Real-time circular performance, cluster pipeline health, and verified environmental recovery rates.",
+                                isDarkTheme = isDarkTheme
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            // IMPACT OVERVIEW ROW (4 KPI Cards from Reference Image)
+                            ImpactOverviewRow(
+                                role = profileState.role,
+                                isDarkTheme = isDarkTheme
+                            )
+
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // FIELD SURVEILLANCE PIPELINE (5 Stages from Reference Image)
+                            SurveillancePipelineHealth(
+                                isDarkTheme = isDarkTheme
+                            )
+
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // YOUR NEXT BEST ACTION CARD (From Reference Image)
+                            NextBestActionCard(
+                                role = profileState.role,
+                                isDarkTheme = isDarkTheme,
+                                onActionClick = {
+                                    if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                        addNotification(
+                                            title = "Working Capital Line Disbursed",
+                                            description = "Disbursed ₹3,50,000 credit line to Shree Balaji Works. Collateral locked in escrow DRP.",
+                                            category = NotificationCategory.PROFILE_RESOURCE,
+                                            isUrgent = false,
+                                            actionLabel = "View Escrow Slip"
+                                        )
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("Approved & disbursed ₹3,50,000 working capital line.")
+                                        }
+                                    } else {
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("Proceeding with next circular action.")
+                                        }
+                                    }
+                                }
+                            )
+
+                            // SPECIALIZED FINANCIAL PARTNER MODULE (when Financial Partner is selected)
+                            if (profileState.role == EnterpriseRole.FINANCIAL_PARTNER) {
+                                Spacer(modifier = Modifier.height(28.dp))
+                                FinancialPartnerCreditDesk(
+                                    isDarkTheme = isDarkTheme,
+                                    onApproveCredit = { amount, enterprise ->
+                                        addNotification(
+                                            title = "Working Capital Credit Line Activated",
+                                            description = "Disbursed $amount credit line to $enterprise. 30-day term, 1.2% monthly rate, 100% escrow DRP collateral.",
+                                            category = NotificationCategory.MATERIAL_MATCH,
+                                            isUrgent = false,
+                                            actionLabel = "View Escrow Vault"
+                                        )
+                                        coroutineScope.launch {
+                                            snackbarHostState.showSnackbar("Credit line $amount successfully disbursed to $enterprise!")
+                                        }
+                                    }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // RECENT RECOVERIES (Before / After from Reference Image)
+                            RecentRecoveriesCard(
+                                isDarkTheme = isDarkTheme
+                            )
+
+                            Spacer(modifier = Modifier.height(28.dp))
+
+                            // ACTION NEEDED NEARBY SECTION (From Reference Image)
+                            ActionNeededNearbySection(
+                                isDarkTheme = isDarkTheme,
+                                onViewAllClick = {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Opening all nearby circular recovery missions.")
+                                    }
+                                }
+                            )
+                        }
+
+                        DashboardViewPage.BUSINESS_INFO -> {
+                            // Dedicated Page for Enterprise Profile, Information & Credentials!
+                            DashboardSectionTitleHeader(
+                                tag = "ENTERPRISE REGISTRY",
+                                title = "Enterprise Profile & Credentials",
+                                subtitle = "Manage verified industrial credentials, plant locations, branches, and dealing resource streams.",
+                                isDarkTheme = isDarkTheme
+                            )
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            // ENTERPRISE IDENTITY OVERVIEW CARD
+                            DashboardIdentityCard(
+                                profile = profileState,
+                                isDarkTheme = isDarkTheme,
+                                completionPercent = completionPercent,
+                                onRegisterFeedClick = { showRegisterDialog = true },
+                                onListLeftoverClick = { showListLeftoverDialog = true }
+                            )
+
+                            Spacer(modifier = Modifier.height(28.dp))
 
                 // 3. COMPLETE YOUR PROFILE Section (Form with Save Draft & Edit Anytime)
                 Box(
@@ -2012,53 +2193,39 @@ fun EnterpriseDashboardScreen(
                         }
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(28.dp))
-
-                // 4. Real-time Searchable List for Resources & Connected Enterprises
-                DashboardSearchableListComponent(
-                    passports = enterpriseDrpsList,
-                    profile = profileState,
-                    isDarkTheme = isDarkTheme,
-                    onSelectDrp = { drp ->
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Opening Digital Passport ${drp.drpId} (${drp.materialName})")
-                        }
-                        drpSectionInitialTab = if (drp.status.isOutdated) 1 else 0
-                        showDrpSectionSheet = true
-                    },
-                    onConnectEnterprise = { enterprise ->
-                        addNotification(
-                            title = "Connection Request Sent: ${enterprise.enterpriseName}",
-                            description = "Circular connection request dispatched to ${enterprise.enterpriseName} in ${enterprise.location}.",
-                            category = NotificationCategory.MATERIAL_MATCH,
-                            isUrgent = false,
-                            actionLabel = "View Partner Slip"
-                        )
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Connected with ${enterprise.enterpriseName} (${enterprise.location})")
-                        }
-                    },
-                    onRegisterNewResource = { showListLeftoverDialog = true }
+            DashboardViewPage.MISSIONS -> {
+                // Dedicated Page for Missions & Regional Logistics
+                DashboardSectionTitleHeader(
+                    tag = "LOGISTICS & TRANSIT RUNS",
+                    title = "Missions & Regional Transit",
+                    subtitle = "Active cluster collection runs, verified logistics routes, and nearby recovery actions.",
+                    isDarkTheme = isDarkTheme
                 )
 
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                // 5. Active Feeds & Digital Resource Passports Section
-                DashboardFeedsSummarySection(
-                    passports = enterpriseDrpsList,
-                    profile = profileState,
+                ActionNeededNearbySection(
                     isDarkTheme = isDarkTheme,
-                    onRegisterNewFeed = { showListLeftoverDialog = true },
-                    onOpenDrpSection = { initialTab ->
-                        drpSectionInitialTab = initialTab
-                        showDrpSectionSheet = true
+                    onViewAllClick = {
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Opening all nearby circular recovery missions.")
+                        }
                     }
                 )
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(28.dp))
+
+                SurveillancePipelineHealth(
+                    isDarkTheme = isDarkTheme
+                )
             }
         }
+
+        Spacer(modifier = Modifier.height(40.dp))
+    }
+}
     }
 }
 

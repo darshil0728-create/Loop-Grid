@@ -101,17 +101,17 @@ fun TransformCtaAndFooterSection(
 
     val darkSectionBgBrush = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF070B0E),
-            Color(0xFF05080A),
-            Color(0xFF030507)
+            Color(0xFF0F1A15),
+            Color(0xFF0B1410),
+            Color(0xFF070E0A)
         )
     )
 
     val lightSectionBgBrush = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFF8FAFC),
-            Color(0xFFF1F5F9),
-            Color(0xFFE2E8F0)
+            Color(0xFFF7FAF7),
+            Color(0xFFF0F6F1),
+            Color(0xFFE6EFE8)
         )
     )
 

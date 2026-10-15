@@ -164,4 +164,28 @@ class DashboardSearchAndLeftoverFormTest {
         assertEquals("Chakan Phase II, Pune", listing.location)
         assertEquals("Immediate / Ready for Pickup", listing.availability)
     }
+
+    @Test
+    fun testDashboardViewPagesSeparation() {
+        val pages = com.example.ui.DashboardViewPage.entries
+        assertEquals(4, pages.size)
+
+        val operations = com.example.ui.DashboardViewPage.OPERATIONS
+        assertEquals("Operations", operations.title)
+        assertEquals("tab_page_operations", operations.testTag)
+        assertEquals("Core", operations.badgeLabel)
+
+        val metrics = com.example.ui.DashboardViewPage.METRICS
+        assertEquals("Metrics & Impact", metrics.title)
+        assertEquals("tab_page_metrics", metrics.testTag)
+        assertEquals("KPIs", metrics.badgeLabel)
+
+        val businessInfo = com.example.ui.DashboardViewPage.BUSINESS_INFO
+        assertEquals("Enterprise Info", businessInfo.title)
+        assertEquals("tab_page_business_info", businessInfo.testTag)
+
+        val missions = com.example.ui.DashboardViewPage.MISSIONS
+        assertEquals("Missions", missions.title)
+        assertEquals("tab_page_missions", missions.testTag)
+    }
 }
